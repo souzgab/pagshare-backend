@@ -31,7 +31,7 @@ public class LobbyController {
             return ResponseEntity.ok(userPfs);
         }
     }
-
+    // endpoint order-service
     @GetMapping(value = "/order-service")
     public ResponseEntity findOrderService() {
         if (orderServices.isEmpty()) {
