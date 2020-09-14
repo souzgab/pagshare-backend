@@ -9,12 +9,12 @@ public class UserPj extends User{
     private List<Withdraw> withdrawList;
     private List<OrderService> orderServices;
 
-    public UserPj(String name, Integer age, String address, String city, String state, String cnpj, String companyName) {
-        super(name, age, address, city, state);
+    public UserPj(String name, Integer age, String address, String city, String cep, String state, String email, String password, String cnpj, String companyName, List<Withdraw> withdrawList, List<OrderService> orderServices) {
+        super(name, age, address, city, cep, state, email, password);
         this.cnpj = cnpj;
         this.companyName = companyName;
-        this.withdrawList = new ArrayList<>();
-        this.orderServices = new ArrayList<>();
+        this.withdrawList = withdrawList;
+        this.orderServices = orderServices;
     }
 
     public String getCnpj() {

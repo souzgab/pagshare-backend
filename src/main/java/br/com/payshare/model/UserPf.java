@@ -1,7 +1,5 @@
 package br.com.payshare.model;
 
-import javax.smartcardio.Card;
-import java.util.ArrayList;
 import java.util.List;
 /*** @Autor vinicius Alves ***/
 public class UserPf extends User {
@@ -10,11 +8,11 @@ public class UserPf extends User {
     private String rg;
     private List<CardSchema> cardSchemaList;
 
-    public UserPf(String name, Integer age, String address, String city, String state, String cpf, String rg) {
-        super(name, age, address, city, state);
+    public UserPf(String name, Integer age, String address, String city, String cep, String state, String email, String password, String cpf, String rg, List<CardSchema> cardSchemaList) {
+        super(name, age, address, city, cep, state, email, password);
         this.cpf = cpf;
         this.rg = rg;
-        this.cardSchemaList = new ArrayList<>();
+        this.cardSchemaList = cardSchemaList;
     }
 
     public String getCpf() {

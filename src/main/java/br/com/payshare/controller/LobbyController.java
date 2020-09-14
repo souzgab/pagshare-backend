@@ -1,6 +1,7 @@
 package br.com.payshare.controller;
 
 import br.com.payshare.model.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
@@ -15,11 +16,13 @@ public class LobbyController {
     private List<OrderService> orderServices;
     private List<User> userPfs;
     private List<Lobby> lobbies;
+    private List<User> usuarioLogado;
 
     public LobbyController() {
         this.orderServices = new ArrayList<>();
         this.userPfs = new ArrayList<>();
         this.lobbies = new ArrayList<>();
+        this.usuarioLogado = new ArrayList<>();
     }
 
     //Get all clients
@@ -111,4 +114,33 @@ public class LobbyController {
     // TO DO END POINT LOBBIES IS NOT CREATED
 
     // Login Service for tests
+
+    @PostMapping(value="/login")
+    public ResponseEntity createSession(@RequestBody UserPf user){
+
+        for(User usuario : userPfs){
+            if (usuario instanceof UserPf){
+                String email = user.getEmail();
+                String password = user.getPassword();
+                if(email.equals(usuario.getEmail()) && password.equals(usuario.getPassword())){
+                    usuarioLogado.add(usuario);
+                }else{
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+                }
+            }
+        }
+
+        return ResponseEntity.ok(usuarioLogado.get(0).getName() + " você foi Logado com Sucesso");
+    }
+
+    @DeleteMapping(value="/session/{id}")
+    public ResponseEntity deleteSession(@PathVariable int id){
+        if (usuarioLogado.size() >= id) {
+            String nome = usuarioLogado.get(id - 1).getName();
+            usuarioLogado.remove(id - 1);
+            return ResponseEntity.ok(nome + " você foi Deslogado com sucesso!");
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }
