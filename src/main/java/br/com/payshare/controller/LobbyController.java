@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/*** @Autor vinicius Alves ***/
+/*** @Autor vinicius Alves , Gabriel Souza ***/
 
 @RestController
 @RequestMapping(value = "/api/v1/payshare")
