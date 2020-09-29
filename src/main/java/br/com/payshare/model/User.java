@@ -1,11 +1,9 @@
 package br.com.payshare.model;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 
 @MappedSuperclass
+@Inheritance(strategy = InheritanceType.JOINED)
 public abstract class User {
     private String name;
     private Integer age;
@@ -15,7 +13,6 @@ public abstract class User {
     private String state;
     private String email;
     private String password;
-
 
     public User(String name, Integer age, String address, String city, String cep, String state, String email, String password) {
         this.name = name;
@@ -92,16 +89,4 @@ public abstract class User {
         this.password = password;
     }
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "name='" + name + '\'' +
-                ", age=" + age +
-                ", address='" + address + '\'' +
-                ", city='" + city + '\'' +
-                ", cep='" + cep + '\'' +
-                ", state='" + state + '\'' +
-                ", email='" + email + '\'' +
-                '}';
-    }
 }

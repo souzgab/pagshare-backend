@@ -18,11 +18,13 @@ public class UserPf extends User implements Serializable {
     private Lobby lobbySession;
 //    private List<CardSchema> cardSchemaList;
 
-    public UserPf(String name, Integer age, String address, String city, String cep, String state, String email, String password, String cpf, String rg, List<CardSchema> cardSchemaList) {
+
+    public UserPf(String name, Integer age, String address, String city, String cep, String state, String email, String password, long userId, String cpf, String rg, Lobby lobbySession) {
         super(name, age, address, city, cep, state, email, password);
+        this.userId = userId;
         this.cpf = cpf;
         this.rg = rg;
-//        this.cardSchemaList = cardSchemaList;
+        this.lobbySession = lobbySession;
     }
 
     public String getCpf() {

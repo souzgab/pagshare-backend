@@ -18,17 +18,7 @@ public class Lobby implements Taxes {
     private Date orderDate;
 
     @OneToMany
-    private User user;
-    //    private List<User> user;
-
-    public Lobby(long lobbyId, String lobbyDescription, String orderDescription, Double amount, Date orderDate) {
-        this.lobbyId = lobbyId;
-        this.lobbyDescription = lobbyDescription;
-        this.orderDescription = orderDescription;
-        this.amount = amount;
-        this.orderDate = orderDate;
-//        this.user = user;
-    }
+    private List<UserPf> user;
 
     public static long getSerialVersionUID() {
         return serialVersionUID;
@@ -73,12 +63,12 @@ public class Lobby implements Taxes {
     public void setOrderDate(Date orderDate) {
         this.orderDate = orderDate;
     }
-//
-//    public List<User> getUser() {
-//        return user;
-//    }
-//
-//    public void setUser(List<User> user) {
-//        this.user = user;
-//    }
+
+    public List<UserPf> getUser() {
+        return user;
+    }
+
+    public void setUser(List<UserPf> user) {
+        this.user = user;
+    }
 }
