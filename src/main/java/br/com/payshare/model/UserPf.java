@@ -15,6 +15,7 @@ public class UserPf extends User implements Serializable {
     private String rg;
 
     @ManyToOne
+    @JoinColumn(name = "fk_belongsToLobby")
     private Lobby lobbySession;
 //    private List<CardSchema> cardSchemaList;
 
@@ -51,7 +52,15 @@ public class UserPf extends User implements Serializable {
         this.userId = userId;
     }
 
-//    public List<CardSchema> getCardSchemaList() {
+    public Lobby getLobbySession() {
+        return lobbySession;
+    }
+
+    public void setLobbySession(Lobby lobbySession) {
+        this.lobbySession = lobbySession;
+    }
+
+    //    public List<CardSchema> getCardSchemaList() {
 //        return cardSchemaList;
 //    }
 //

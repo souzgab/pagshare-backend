@@ -3,7 +3,6 @@ package br.com.payshare.model;
 import javax.persistence.*;
 
 @MappedSuperclass
-@Inheritance(strategy = InheritanceType.JOINED)
 public abstract class User {
     private String name;
     private Integer age;
