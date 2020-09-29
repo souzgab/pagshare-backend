@@ -13,17 +13,6 @@ public abstract class User {
     private String email;
     private String password;
 
-    public User(String name, Integer age, String address, String city, String cep, String state, String email, String password) {
-        this.name = name;
-        this.age = age;
-        this.address = address;
-        this.city = city;
-        this.cep = cep;
-        this.state = state;
-        this.email = email;
-        this.password = password;
-    }
-
     public String getName() {
         return name;
     }

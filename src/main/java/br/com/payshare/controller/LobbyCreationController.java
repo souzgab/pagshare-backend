@@ -26,8 +26,17 @@ public class LobbyCreationController {
     }
 
     @PostMapping(value = "/lobby")
-    public ResponseEntity createUser(@RequestBody Lobby lobby, @RequestParam long id) {
+    public ResponseEntity createLobby(@RequestBody Lobby lobby) {
         lobbyRepository.save(lobby);
+
+        return ResponseEntity.created(null).build();
+    }
+
+    @PostMapping(value = "/lobby2/{id}")
+    public ResponseEntity createLobby2(@RequestBody Lobby lobby, @PathVariable long id) {
+        UserPf userOn = new UserPf();
+        user.findById(id);
+        lobby.add(userOn);
         return ResponseEntity.created(null).build();
     }
 

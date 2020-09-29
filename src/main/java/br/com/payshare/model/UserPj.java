@@ -17,13 +17,6 @@ public class UserPj extends User implements Serializable {
     private String companyName;
 //    private List<Withdraw> withdrawList;
 
-    public UserPj(String name, Integer age, String address, String city, String cep, String state, String email, String password, String cnpj, String companyName, List<Withdraw> withdrawList) {
-        super(name, age, address, city, cep, state, email, password);
-        this.cnpj = cnpj;
-        this.companyName = companyName;
-//        this.withdrawList = withdrawList;
-    }
-
     public String getCnpj() {
         return cnpj;
     }

@@ -19,13 +19,20 @@ public class UserPf extends User implements Serializable {
     private Lobby lobbySession;
 //    private List<CardSchema> cardSchemaList;
 
+    public UserPf(){
 
-    public UserPf(String name, Integer age, String address, String city, String cep, String state, String email, String password, long userId, String cpf, String rg, Lobby lobbySession) {
-        super(name, age, address, city, cep, state, email, password);
+    }
+
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
+
+    public long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(long userId) {
         this.userId = userId;
-        this.cpf = cpf;
-        this.rg = rg;
-        this.lobbySession = lobbySession;
     }
 
     public String getCpf() {
@@ -42,14 +49,6 @@ public class UserPf extends User implements Serializable {
 
     public void setRg(String rg) {
         this.rg = rg;
-    }
-
-    public long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(long userId) {
-        this.userId = userId;
     }
 
     public Lobby getLobbySession() {
