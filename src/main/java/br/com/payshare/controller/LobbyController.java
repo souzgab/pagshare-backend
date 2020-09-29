@@ -13,13 +13,12 @@ import java.util.List;
 @RequestMapping(value = "/api/v1/payshare")
 public class LobbyController {
 
-    private List<OrderService> orderServices;
     private List<User> userPfs;
     private List<Lobby> lobbies;
     private List<User> usuarioLogado;
 
     public LobbyController() {
-        this.orderServices = new ArrayList<>();
+
         this.userPfs = new ArrayList<>();
         this.lobbies = new ArrayList<>();
         this.usuarioLogado = new ArrayList<>();
@@ -35,14 +34,14 @@ public class LobbyController {
         }
     }
     // endpoint order-service
-    @GetMapping(value = "/order-service")
-    public ResponseEntity findOrderService() {
-        if (orderServices.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok(orderServices);
-        }
-    }
+//    @GetMapping(value = "/order-service")
+//    public ResponseEntity findOrderService() {
+//        if (orderServices.isEmpty()) {
+//            return ResponseEntity.noContent().build();
+//        } else {
+//            return ResponseEntity.ok(orderServices);
+//        }
+//    }
 
     //Get all lobbies from controller
     @GetMapping(value = "/lobbies")
@@ -64,11 +63,11 @@ public class LobbyController {
     // Create OrderService for set Lobby orderService object
     // Set Loby description
     // Add lobby in ArrayList lobbies
-    @PostMapping(value = "/create-orderservice")
-    public ResponseEntity createOrderService(@RequestBody OrderService orderService) {
-        orderServices.add(orderService);
-        return ResponseEntity.created(null).build();
-    }
+//    @PostMapping(value = "/create-orderservice")
+//    public ResponseEntity createOrderService(@RequestBody OrderService orderService) {
+//        orderServices.add(orderService);
+//        return ResponseEntity.created(null).build();
+//    }
 
     @PutMapping(value = "/clients/{id}")
     public ResponseEntity updateClients(@RequestBody UserPf userPf, @PathVariable int id) {
@@ -80,15 +79,15 @@ public class LobbyController {
         }
     }
 
-    @PutMapping(value = "/order-service/{id}")
-    public ResponseEntity updateClients(@RequestBody OrderService oderService, @PathVariable int id) {
-        if (orderServices.size() >= id) {
-            orderServices.set(id - 1, oderService);
-            return ResponseEntity.ok(null);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
+//    @PutMapping(value = "/order-service/{id}")
+//    public ResponseEntity updateClients(@RequestBody OrderService oderService, @PathVariable int id) {
+//        if (orderServices.size() >= id) {
+//            orderServices.set(id - 1, oderService);
+//            return ResponseEntity.ok(null);
+//        } else {
+//            return ResponseEntity.notFound().build();
+//        }
+//    }
 
     @DeleteMapping(value = "/clients/{id}")
     public ResponseEntity deleteClient(@PathVariable int id) {
@@ -100,15 +99,15 @@ public class LobbyController {
         }
     }
 
-    @DeleteMapping(value = "/order-service/{id}")
-    public ResponseEntity deleteOrderService(@PathVariable int id) {
-        if (orderServices.size() >= id) {
-            orderServices.remove(id - 1);
-            return ResponseEntity.ok(null);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
+//    @DeleteMapping(value = "/order-service/{id}")
+//    public ResponseEntity deleteOrderService(@PathVariable int id) {
+//        if (orderServices.size() >= id) {
+//            orderServices.remove(id - 1);
+//            return ResponseEntity.ok(null);
+//        } else {
+//            return ResponseEntity.notFound().build();
+//        }
+//    }
 
 
     // TO DO END POINT LOBBIES IS NOT CREATED

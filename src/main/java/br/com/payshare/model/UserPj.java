@@ -1,20 +1,27 @@
 package br.com.payshare.model;
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-/*** @Autor vinicius Alves ***/
-public class UserPj extends User{
+
+public class UserPj extends User implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long userId;
     private String cnpj;
     private String companyName;
-    private List<Withdraw> withdrawList;
-    private List<OrderService> orderServices;
+//    private List<Withdraw> withdrawList;
 
-    public UserPj(String name, Integer age, String address, String city, String cep, String state, String email, String password, String cnpj, String companyName, List<Withdraw> withdrawList, List<OrderService> orderServices) {
+    public UserPj(String name, Integer age, String address, String city, String cep, String state, String email, String password, String cnpj, String companyName, List<Withdraw> withdrawList) {
         super(name, age, address, city, cep, state, email, password);
         this.cnpj = cnpj;
         this.companyName = companyName;
-        this.withdrawList = withdrawList;
-        this.orderServices = orderServices;
+//        this.withdrawList = withdrawList;
     }
 
     public String getCnpj() {
@@ -33,29 +40,12 @@ public class UserPj extends User{
         this.companyName = companyName;
     }
 
-    public List<Withdraw> getWithdrawList() {
-        return withdrawList;
-    }
+//    public List<Withdraw> getWithdrawList() {
+//        return withdrawList;
+//    }
+//
+//    public void setWithdrawList(List<Withdraw> withdrawList) {
+//        this.withdrawList = withdrawList;
+//    }
 
-    public void setWithdrawList(List<Withdraw> withdrawList) {
-        this.withdrawList = withdrawList;
-    }
-
-    public List<OrderService> getOrderServices() {
-        return orderServices;
-    }
-
-    public void setOrderServices(List<OrderService> orderServices) {
-        this.orderServices = orderServices;
-    }
-
-    @Override
-    public String toString() {
-        return "UserPj{" +
-                "cnpj='" + cnpj + '\'' +
-                ", companyName='" + companyName + '\'' +
-                ", withdrawList=" + withdrawList +
-                ", orderServices=" + orderServices +
-                "} " + super.toString();
-    }
 }

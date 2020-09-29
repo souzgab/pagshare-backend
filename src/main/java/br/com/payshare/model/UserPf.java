@@ -1,18 +1,28 @@
 package br.com.payshare.model;
 
+import javax.persistence.*;
+import java.io.Serializable;
 import java.util.List;
-/*** @Autor vinicius Alves ***/
-public class UserPf extends User {
 
+@Entity
+public class UserPf extends User implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long userId;
     private String cpf;
     private String rg;
-    private List<CardSchema> cardSchemaList;
+
+    @ManyToOne
+    private Lobby lobbySession;
+//    private List<CardSchema> cardSchemaList;
 
     public UserPf(String name, Integer age, String address, String city, String cep, String state, String email, String password, String cpf, String rg, List<CardSchema> cardSchemaList) {
         super(name, age, address, city, cep, state, email, password);
         this.cpf = cpf;
         this.rg = rg;
-        this.cardSchemaList = cardSchemaList;
+//        this.cardSchemaList = cardSchemaList;
     }
 
     public String getCpf() {
@@ -31,24 +41,23 @@ public class UserPf extends User {
         this.rg = rg;
     }
 
-    public List<CardSchema> getCardSchemaList() {
-        return cardSchemaList;
+    public long getUserId() {
+        return userId;
     }
 
-    public void setCardSchemaList(List<CardSchema> cardSchemaList) {
-        this.cardSchemaList = cardSchemaList;
+    public void setUserId(long userId) {
+        this.userId = userId;
     }
 
-    public void addCardSchema(CardSchema cardSchema){
-        cardSchemaList.add(cardSchema);
-    }
-
-    @Override
-    public String toString() {
-        return "UserPf{" +
-                "cpf='" + cpf + '\'' +
-                ", rg='" + rg + '\'' +
-                ", cardSchemaList=" + cardSchemaList +
-                "} " + super.toString();
-    }
+//    public List<CardSchema> getCardSchemaList() {
+//        return cardSchemaList;
+//    }
+//
+//    public void setCardSchemaList(List<CardSchema> cardSchemaList) {
+//        this.cardSchemaList = cardSchemaList;
+//    }
+//
+//    public void addCardSchema(CardSchema cardSchema){
+//        cardSchemaList.add(cardSchema);
+//    }
 }

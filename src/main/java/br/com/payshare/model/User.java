@@ -1,5 +1,11 @@
 package br.com.payshare.model;
-/*** @Autor vinicius Alves ***/
+
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.OneToMany;
+
+@MappedSuperclass
 public abstract class User {
     private String name;
     private Integer age;
@@ -9,6 +15,7 @@ public abstract class User {
     private String state;
     private String email;
     private String password;
+
 
     public User(String name, Integer age, String address, String city, String cep, String state, String email, String password) {
         this.name = name;
