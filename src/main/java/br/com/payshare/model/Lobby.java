@@ -13,7 +13,7 @@ public class Lobby implements Taxes {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long lobbyId;
+    private int lobbyId;
     private String lobbyDescription, orderDescription;
     private Double amount;
     private Date orderDate;
@@ -25,7 +25,6 @@ public class Lobby implements Taxes {
         user.add(xpto);
     }
 
-
     public static long getSerialVersionUID() {
         return serialVersionUID;
     }
@@ -34,7 +33,7 @@ public class Lobby implements Taxes {
         return lobbyId;
     }
 
-    public void setLobbyId(long lobbyId) {
+    public void setLobbyId(int lobbyId) {
         this.lobbyId = lobbyId;
     }
 

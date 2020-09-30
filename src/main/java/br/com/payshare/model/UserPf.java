@@ -10,7 +10,7 @@ public class UserPf extends User implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long userId;
+    private int userId;
     private String cpf;
     private String rg;
 
@@ -31,7 +31,7 @@ public class UserPf extends User implements Serializable {
         return userId;
     }
 
-    public void setUserId(long userId) {
+    public void setUserId(int userId) {
         this.userId = userId;
     }
 

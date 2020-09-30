@@ -1,5 +1,6 @@
 package br.com.payshare.controller;
 
+import br.com.payshare.manager.LobbyManager;
 import br.com.payshare.model.Lobby;
 import br.com.payshare.model.UserPf;
 import br.com.payshare.repository.LobbyRepository;
@@ -28,17 +29,27 @@ public class LobbyCreationController {
     @PostMapping(value = "/lobby")
     public ResponseEntity createLobby(@RequestBody Lobby lobby) {
         lobbyRepository.save(lobby);
-
         return ResponseEntity.created(null).build();
     }
 
-    @PostMapping(value = "/lobby2/{id}")
-    public ResponseEntity createLobby2(@RequestBody Lobby lobby, @PathVariable long id) {
-        UserPf userOn = new UserPf();
-        user.findById(id);
-        lobby.add(userOn);
+    @PostMapping(value = "/adicionaParticipantes/{idLobby}/{idUser}")
+    public ResponseEntity addP(@PathVariable int idLobby, @PathVariable int idUser) {
+        try {
+            LobbyManager x = new LobbyManager();
+            x.addParticipante(idLobby, idUser);
+        }catch (Exception e){
+            System.out.println(e);
+        }
         return ResponseEntity.created(null).build();
     }
+
+//    @PostMapping(value = "/lobby2/{id}")
+//    public ResponseEntity createLobby2(@RequestBody Lobby lobby, @PathVariable long id) {
+//        UserPf userOn = new UserPf();
+//        user.findById(id);
+//        lobby.add(userOn);
+//        return ResponseEntity.created(null).build();
+//    }
 
     @GetMapping("/users")
     public ResponseEntity<?> getUser(){

@@ -4,5 +4,5 @@ import br.com.payshare.model.User;
 import br.com.payshare.model.UserPf;
 import org.springframework.data.repository.CrudRepository;
 
-public interface UserRepository extends CrudRepository<UserPf, Long> {
+public interface UserRepository extends CrudRepository<UserPf, Integer> {
 }
