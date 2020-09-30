@@ -5,12 +5,17 @@ import br.com.payshare.model.User;
 import br.com.payshare.model.UserPf;
 import br.com.payshare.repository.LobbyRepository;
 import br.com.payshare.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 
+@Service
 public class LobbyManager {
 
+    @Autowired
     private LobbyRepository lobbyRepository;
+
+    @Autowired
     private UserRepository userRepository;
 
     public LobbyManager(){
@@ -18,14 +23,7 @@ public class LobbyManager {
     }
 
     public void addParticipante(int lobbyId, int userId){
-        System.out.println("Entrei");
-       try {
-           Lobby x = lobbyRepository.findById(lobbyId).get();
-           UserPf user = userRepository.findById(userId).get();
-           System.out.println("Achei a lobby" + x);
-           System.out.println("E Adicionei o usuario " + user);
-       }catch (Exception e){
-           System.out.println(e);
-       }
+       System.out.println("Entrei");
+       System.out.println(lobbyRepository.findAll());
     }
 }

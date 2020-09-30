@@ -21,10 +21,6 @@ public class Lobby implements Taxes {
     @OneToMany
     private List<UserPf> user;
 
-    public void add(UserPf xpto){
-        user.add(xpto);
-    }
-
     public static long getSerialVersionUID() {
         return serialVersionUID;
     }

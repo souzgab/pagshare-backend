@@ -20,6 +20,9 @@ public class LobbyCreationController {
     @Autowired
     private LobbyRepository lobbyRepository;
 
+    @Autowired
+    private LobbyManager xpto;
+
     @PostMapping(value = "/clients")
     public ResponseEntity createUser(@RequestBody UserPf userPf) {
         user.save(userPf);
@@ -35,8 +38,7 @@ public class LobbyCreationController {
     @PostMapping(value = "/adicionaParticipantes/{idLobby}/{idUser}")
     public ResponseEntity addP(@PathVariable int idLobby, @PathVariable int idUser) {
         try {
-            LobbyManager x = new LobbyManager();
-            x.addParticipante(idLobby, idUser);
+            xpto.addParticipante(idLobby, idUser);
         }catch (Exception e){
             System.out.println(e);
         }
