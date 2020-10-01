@@ -1,6 +1,5 @@
 package br.com.payshare.controller;
 
-import br.com.payshare.manager.LobbyManager;
 import br.com.payshare.model.Lobby;
 import br.com.payshare.model.UserPf;
 import br.com.payshare.repository.LobbyRepository;
@@ -9,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v2/payshare")
@@ -20,8 +21,6 @@ public class LobbyCreationController {
     @Autowired
     private LobbyRepository lobbyRepository;
 
-    @Autowired
-    private LobbyManager xpto;
 
     @PostMapping(value = "/clients")
     public ResponseEntity createUser(@RequestBody UserPf userPf) {
@@ -35,23 +34,16 @@ public class LobbyCreationController {
         return ResponseEntity.created(null).build();
     }
 
-    @PostMapping(value = "/adicionaParticipantes/{idLobby}/{idUser}")
-    public ResponseEntity addP(@PathVariable int idLobby, @PathVariable int idUser) {
-        try {
-            xpto.addParticipante(idLobby, idUser);
-        }catch (Exception e){
-            System.out.println(e);
-        }
+    @PostMapping(value = "/{idUser}/{idLobby}")
+    public ResponseEntity addP(@PathVariable int idUser,@PathVariable int idLobby) {
+        UserPf userpf = user.findByUserId(idUser);
+        System.out.println(userpf);
+        Lobby lobby = lobbyRepository.findByLobbyId(idLobby);
+        userpf.setLobbySession(lobby);
+        user.save(userpf);
         return ResponseEntity.created(null).build();
     }
 
-//    @PostMapping(value = "/lobby2/{id}")
-//    public ResponseEntity createLobby2(@RequestBody Lobby lobby, @PathVariable long id) {
-//        UserPf userOn = new UserPf();
-//        user.findById(id);
-//        lobby.add(userOn);
-//        return ResponseEntity.created(null).build();
-//    }
 
     @GetMapping("/users")
     public ResponseEntity<?> getUser(){
@@ -64,6 +56,15 @@ public class LobbyCreationController {
     public ResponseEntity<?> getLobby(){
         return new ResponseEntity<>(
                 lobbyRepository.findAll(), HttpStatus.OK
+        );
+    }
+
+    @GetMapping("/userLobby/{id}")
+    public ResponseEntity<?> getLobby(@PathVariable int id){
+        Lobby lobby = lobbyRepository.findByLobbyId(id);
+        List<UserPf> userPfList = user.findByLobbySession(lobby);
+        return new ResponseEntity<>(
+                userPfList, HttpStatus.OK
         );
     }
 
