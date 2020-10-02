@@ -1,28 +1,56 @@
 package br.com.payshare.model;
-/*** @Autor vinicius Alves ***/
-public abstract class User {
-    private String name;
-    private Integer age;
-    private String address;
-    private String city;
-    private String cep;
-    private String state;
-    private String email;
-    private String password;
+import javax.validation.constraints.NotNull;
+import javax.persistence.*;
+import java.io.Serializable;
 
-    public User(String name, Integer age, String address, String city, String cep, String state, String email, String password) {
-        this.name = name;
-        this.age = age;
-        this.address = address;
-        this.city = city;
-        this.cep = cep;
-        this.state = state;
-        this.email = email;
-        this.password = password;
-    }
+@MappedSuperclass
+public abstract class User implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "USER_ID", nullable = false)
+    private long userId;
+
+    @NotNull
+    @Column(name = "USER_NAME" , nullable = false )
+    private String name;
+
+    @NotNull
+    @Column(name = "USER_AGE" , nullable = false , length = 3)
+    private Integer age;
+
+    @Column(name = "USER_ADDRESS" , length = 255)
+    private String address;
+
+    @Column(name = "USER_CITY" , length = 50)
+    private String city;
+
+    @Column(name = "USER_CEP" , length = 9)
+    private String cep;
+
+    @Column(name = "USER_STATE" , length = 50)
+    private String state;
+
+    @NotNull
+    @Column(name = "USER_EMAIL" , length = 200 , nullable = false)
+    private String email;
+
+    @NotNull
+    @Column(name = "USER_PASSWORD" , length = 200 , nullable = false)
+    private String password;
 
     public String getName() {
         return name;
+    }
+
+
+    public long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
     }
 
     public void setName(String name) {
@@ -83,18 +111,5 @@ public abstract class User {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "name='" + name + '\'' +
-                ", age=" + age +
-                ", address='" + address + '\'' +
-                ", city='" + city + '\'' +
-                ", cep='" + cep + '\'' +
-                ", state='" + state + '\'' +
-                ", email='" + email + '\'' +
-                '}';
     }
 }

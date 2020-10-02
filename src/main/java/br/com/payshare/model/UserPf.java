@@ -1,18 +1,47 @@
 package br.com.payshare.model;
 
-import java.util.List;
-/*** @Autor vinicius Alves ***/
-public class UserPf extends User {
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import javax.validation.constraints.NotNull;
+import javax.persistence.*;
+import java.util.Objects;
 
+@Entity
+@Table(name = "USER_PF", indexes = {@Index(name = "USER_PF_EMAIL", columnList = "USER_EMAIL" , unique = true)})
+public class UserPf extends User{
+
+    @NotNull
+    @Column(name = "USER_CPF", length = 14, nullable = false)
     private String cpf;
-    private String rg;
-    private List<CardSchema> cardSchemaList;
 
-    public UserPf(String name, Integer age, String address, String city, String cep, String state, String email, String password, String cpf, String rg, List<CardSchema> cardSchemaList) {
-        super(name, age, address, city, cep, state, email, password);
-        this.cpf = cpf;
-        this.rg = rg;
-        this.cardSchemaList = cardSchemaList;
+    @Column(name = "USER_RG" , length = 9 , nullable = true)
+    private String rg;
+
+    @Column(name = "USER_LOBBY_HOST" , length = 1 , nullable = true , columnDefinition = "boolean default false")
+    private boolean userLobbyHost;
+
+    @ManyToOne
+    @JoinColumn(name = "LOBBY_ID")
+    @JsonBackReference
+    private Lobby lobby;
+
+    public UserPf() {
+
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserPf userPf = (UserPf) o;
+        return userLobbyHost == userPf.userLobbyHost &&
+                Objects.equals(cpf, userPf.cpf) &&
+                Objects.equals(rg, userPf.rg) &&
+                Objects.equals(lobby, userPf.lobby);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(cpf, rg, userLobbyHost, lobby);
     }
 
     public String getCpf() {
@@ -31,24 +60,19 @@ public class UserPf extends User {
         this.rg = rg;
     }
 
-    public List<CardSchema> getCardSchemaList() {
-        return cardSchemaList;
+    public Lobby getLobby() {
+        return lobby;
     }
 
-    public void setCardSchemaList(List<CardSchema> cardSchemaList) {
-        this.cardSchemaList = cardSchemaList;
+    public void setLobby(Lobby lobby) {
+        this.lobby = lobby;
     }
 
-    public void addCardSchema(CardSchema cardSchema){
-        cardSchemaList.add(cardSchema);
+    public boolean isUserLobbyHost() {
+        return userLobbyHost;
     }
 
-    @Override
-    public String toString() {
-        return "UserPf{" +
-                "cpf='" + cpf + '\'' +
-                ", rg='" + rg + '\'' +
-                ", cardSchemaList=" + cardSchemaList +
-                "} " + super.toString();
+    public void setUserLobbyHost(boolean userLobbyHost) {
+        this.userLobbyHost = userLobbyHost;
     }
 }

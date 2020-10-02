@@ -1,146 +1,87 @@
 package br.com.payshare.controller;
 
-import br.com.payshare.model.*;
+
+import br.com.payshare.api.LobbyApiController;
+import br.com.payshare.model.Lobby;
+import br.com.payshare.model.UserPf;
+import br.com.payshare.service.LobbyService;
+import br.com.payshare.service.UserPfService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-/*** @Autor vinicius Alves , Gabriel Souza ***/
-
 @RestController
-@RequestMapping(value = "/api/v1/payshare")
-public class LobbyController {
+public class LobbyController implements LobbyApiController {
 
-    private List<OrderService> orderServices;
-    private List<User> userPfs;
-    private List<Lobby> lobbies;
-    private List<User> usuarioLogado;
+    LobbyService lobbyService;
+    UserPfService userPfService;
 
-    public LobbyController() {
-        this.orderServices = new ArrayList<>();
-        this.userPfs = new ArrayList<>();
-        this.lobbies = new ArrayList<>();
-        this.usuarioLogado = new ArrayList<>();
+    @Autowired
+    public LobbyController(LobbyService lobbyService, UserPfService userPfService) {
+        this.lobbyService = lobbyService;
+        this.userPfService = userPfService;
     }
 
-    //Get all clients
-    @GetMapping(value = "/clients")
-    public ResponseEntity findAll() {
-        if (userPfs.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok(userPfs);
+    @Override
+    public ResponseEntity<List<Lobby>> findAll() {
+        if (lobbyService.findAll().isEmpty())
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(lobbyService.findAll(), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<Lobby> findById(long id) {
+        Lobby lobby = lobbyService.findById(id);
+        if (lobby == null)
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(lobbyService.findById(id), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<?> create(Lobby lobby, long idUser) throws InstantiationException, IllegalAccessException {
+        LocalDateTime now = LocalDateTime.now();
+        UserPf userPf = userPfService.findByUserId(idUser);
+        List<UserPf> userPfList = new ArrayList<>();
+        userPfList.add(userPf);
+        //This Host lobby
+        userPf.setUserLobbyHost(true);
+        lobby.setCreationDate(now);
+        lobby.setExpirationDate(now.plusHours(48));
+        lobby.setUserPfList(userPfList);
+        return new ResponseEntity<>(lobbyService.save(lobby), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<?> addUserLobby(long idLobby, long id) {
+        UserPf userPf = userPfService.findByUserId(id);
+        Lobby lobby = lobbyService.findById(idLobby);
+        userPf.setLobby(lobby);
+        return new ResponseEntity<>(lobbyService.save(lobby), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<?> update(Lobby lobby, long id) throws InstantiationException, IllegalAccessException {
+        Lobby lobbyEntity = lobbyService.findById(id);
+        if (lobbyEntity == null)
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(lobbyService.save(lobby), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<Void> delete(long id) {
+        Lobby lobbyEntity = lobbyService.findById(id);
+        if (lobbyEntity == null) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
-    }
-    // endpoint order-service
-    @GetMapping(value = "/order-service")
-    public ResponseEntity findOrderService() {
-        if (orderServices.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok(orderServices);
-        }
+        lobbyService.deleteById(id);
+        return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
-    //Get all lobbies from controller
-    @GetMapping(value = "/lobbies")
-    public ResponseEntity findLobbies() {
-        if (lobbies.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok(lobbies);
-        }
-    }
-
-    // Create User for insert orderService
-    @PostMapping(value = "/clients")
-    public ResponseEntity createUser(@RequestBody UserPf userPf) {
-        userPfs.add(userPf);
-        return ResponseEntity.created(null).build();
-    }
-
-    // Create OrderService for set Lobby orderService object
-    // Set Loby description
-    // Add lobby in ArrayList lobbies
-    @PostMapping(value = "/create-orderservice")
-    public ResponseEntity createOrderService(@RequestBody OrderService orderService) {
-        orderServices.add(orderService);
-        return ResponseEntity.created(null).build();
-    }
-
-    @PutMapping(value = "/clients/{id}")
-    public ResponseEntity updateClients(@RequestBody UserPf userPf, @PathVariable int id) {
-        if (userPfs.size() >= id) {
-            userPfs.set(id - 1, userPf);
-            return ResponseEntity.ok(null);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @PutMapping(value = "/order-service/{id}")
-    public ResponseEntity updateClients(@RequestBody OrderService oderService, @PathVariable int id) {
-        if (orderServices.size() >= id) {
-            orderServices.set(id - 1, oderService);
-            return ResponseEntity.ok(null);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @DeleteMapping(value = "/clients/{id}")
-    public ResponseEntity deleteClient(@PathVariable int id) {
-        if (userPfs.size() >= id) {
-            userPfs.remove(id - 1);
-            return ResponseEntity.ok(null);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @DeleteMapping(value = "/order-service/{id}")
-    public ResponseEntity deleteOrderService(@PathVariable int id) {
-        if (orderServices.size() >= id) {
-            orderServices.remove(id - 1);
-            return ResponseEntity.ok(null);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-
-    // TO DO END POINT LOBBIES IS NOT CREATED
-
-    // Login Service for tests
-
-    @PostMapping(value="/login")
-    public ResponseEntity createSession(@RequestBody UserPf user){
-
-        for(User usuario : userPfs){
-            if (usuario instanceof UserPf){
-                String email = user.getEmail();
-                String password = user.getPassword();
-                if(email.equals(usuario.getEmail()) && password.equals(usuario.getPassword())){
-                    usuarioLogado.add(usuario);
-                }else{
-                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-                }
-            }
-        }
-
-        return ResponseEntity.ok(usuarioLogado.get(0).getName() + " você foi Logado com Sucesso");
-    }
-
-    @DeleteMapping(value="/session/{id}")
-    public ResponseEntity deleteSession(@PathVariable int id){
-        if (usuarioLogado.size() >= id) {
-            String nome = usuarioLogado.get(id - 1).getName();
-            usuarioLogado.remove(id - 1);
-            return ResponseEntity.ok(nome + " você foi Deslogado com sucesso!");
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
 }
