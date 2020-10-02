@@ -1,38 +1,80 @@
 package br.com.payshare.model;
 
 import br.com.payshare.interfaces.Taxes;
-import br.com.payshare.repository.UserRepository;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import javax.validation.constraints.NotNull;
+import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
+@Table(name = "Lobby")
 public class Lobby implements Taxes {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int lobbyId;
-    private String lobbyDescription, orderDescription;
-    private Double amount;
-    private Date orderDate;
+    @Column(name = "LOBBY_ID" , nullable = false)
+    private long id;
 
-    @OneToMany
-    private List<UserPf> user;
+    @NotNull
+    @Column(name = "LOBBY_DESCRIPTION" , length = 100 , nullable = false)
+    private String lobbyDescription;
 
-    public void addUserLobby(UserPf userPf){ user.add(userPf);}
+    @NotNull
+    @Column(name = "LOBBY_ORDER_DESCRIPTION" , length = 100 , nullable = false)
+    private String orderDescription;
 
-    public static long getSerialVersionUID() {
-        return serialVersionUID;
+    @NotNull
+    @Column(name = "LOBBY_AMOUNT" , nullable = false)
+    private BigDecimal amount;
+
+    @Column(name = "LOBBY_CREATION_DATE")
+    @Convert(converter = Jsr310JpaConverters.LocalDateTimeConverter.class)
+    private LocalDateTime creationDate;
+
+    @Column(name = "LOBBY_EXPIRATION_DATE")
+    @Convert(converter = Jsr310JpaConverters.LocalDateTimeConverter.class)
+    private LocalDateTime expirationDate;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "LOBBY_ID")
+    @JsonManagedReference
+    private List<UserPf> userPfList = new ArrayList<>();
+
+    public Lobby() {
     }
 
-    public long getLobbyId() {
-        return lobbyId;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Lobby lobby = (Lobby) o;
+        return id == lobby.id &&
+                Objects.equals(lobbyDescription, lobby.lobbyDescription) &&
+                Objects.equals(orderDescription, lobby.orderDescription) &&
+                Objects.equals(amount, lobby.amount) &&
+                Objects.equals(creationDate, lobby.creationDate) &&
+                Objects.equals(expirationDate, lobby.expirationDate) &&
+                Objects.equals(userPfList, lobby.userPfList);
     }
 
-    public void setLobbyId(int lobbyId) {
-        this.lobbyId = lobbyId;
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, lobbyDescription, orderDescription, amount, creationDate, expirationDate, userPfList);
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getLobbyDescription() {
@@ -51,27 +93,35 @@ public class Lobby implements Taxes {
         this.orderDescription = orderDescription;
     }
 
-    public Double getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
 
-    public void setAmount(Double amount) {
+    public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
 
-    public Date getOrderDate() {
-        return orderDate;
+    public LocalDateTime getCreationDate() {
+        return creationDate;
     }
 
-    public void setOrderDate(Date orderDate) {
-        this.orderDate = orderDate;
+    public void setCreationDate(LocalDateTime creationDate) {
+        this.creationDate = creationDate;
     }
 
-    public List<UserPf> getUser() {
-        return user;
+    public LocalDateTime getExpirationDate() {
+        return expirationDate;
     }
 
-    public void setUser(List<UserPf> user) {
-        this.user = user;
+    public void setExpirationDate(LocalDateTime expirationDate) {
+        this.expirationDate = expirationDate;
+    }
+
+    public List<UserPf> getUserPfList() {
+        return userPfList;
+    }
+
+    public void setUserPfList(List<UserPf> userPfList) {
+        this.userPfList = userPfList;
     }
 }

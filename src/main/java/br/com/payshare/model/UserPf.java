@@ -1,38 +1,47 @@
 package br.com.payshare.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import javax.validation.constraints.NotNull;
 import javax.persistence.*;
-import java.io.Serializable;
-import java.util.List;
+import java.util.Objects;
 
 @Entity
-public class UserPf extends User implements Serializable {
+@Table(name = "USER_PF", indexes = {@Index(name = "USER_PF_EMAIL", columnList = "USER_EMAIL" , unique = true)})
+public class UserPf extends User{
 
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private int userId;
+    @NotNull
+    @Column(name = "USER_CPF", length = 14, nullable = false)
     private String cpf;
+
+    @Column(name = "USER_RG" , length = 9 , nullable = true)
     private String rg;
 
+    @Column(name = "USER_LOBBY_HOST" , length = 1 , nullable = true , columnDefinition = "boolean default false")
+    private boolean userLobbyHost;
+
     @ManyToOne
-    @JoinColumn(name = "fk_belongsToLobby")
-    private Lobby lobbySession;
-//    private List<CardSchema> cardSchemaList;
+    @JoinColumn(name = "LOBBY_ID")
+    @JsonBackReference
+    private Lobby lobby;
 
-    public UserPf(){
+    public UserPf() {
 
     }
 
-    public static long getSerialVersionUID() {
-        return serialVersionUID;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserPf userPf = (UserPf) o;
+        return userLobbyHost == userPf.userLobbyHost &&
+                Objects.equals(cpf, userPf.cpf) &&
+                Objects.equals(rg, userPf.rg) &&
+                Objects.equals(lobby, userPf.lobby);
     }
 
-    public long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
+    @Override
+    public int hashCode() {
+        return Objects.hash(cpf, rg, userLobbyHost, lobby);
     }
 
     public String getCpf() {
@@ -51,23 +60,19 @@ public class UserPf extends User implements Serializable {
         this.rg = rg;
     }
 
-    public Lobby getLobbySession() {
-        return lobbySession;
+    public Lobby getLobby() {
+        return lobby;
     }
 
-    public void setLobbySession(Lobby lobbySession) {
-        this.lobbySession = lobbySession;
+    public void setLobby(Lobby lobby) {
+        this.lobby = lobby;
     }
 
-    //    public List<CardSchema> getCardSchemaList() {
-//        return cardSchemaList;
-//    }
-//
-//    public void setCardSchemaList(List<CardSchema> cardSchemaList) {
-//        this.cardSchemaList = cardSchemaList;
-//    }
-//
-//    public void addCardSchema(CardSchema cardSchema){
-//        cardSchemaList.add(cardSchema);
-//    }
+    public boolean isUserLobbyHost() {
+        return userLobbyHost;
+    }
+
+    public void setUserLobbyHost(boolean userLobbyHost) {
+        this.userLobbyHost = userLobbyHost;
+    }
 }
