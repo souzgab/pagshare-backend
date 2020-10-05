@@ -1,14 +1,15 @@
-package br.com.payshare.service;
+package br.com.payshare.serviceImpl;
 
 import br.com.payshare.model.Lobby;
 import br.com.payshare.repository.LobbyRepository;
+import br.com.payshare.service.LobbyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class LobbyServiceImpl implements LobbyService{
+public class LobbyServiceImpl implements LobbyService {
 
 
     LobbyRepository lobbyRepository;

@@ -1,8 +1,9 @@
-package br.com.payshare.service;
+package br.com.payshare.serviceImpl;
 
 import br.com.payshare.model.Lobby;
 import br.com.payshare.model.UserPf;
 import br.com.payshare.repository.UserRepository;
+import br.com.payshare.service.UserPfService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
