@@ -12,4 +12,5 @@ import java.util.List;
 @Repository
 public interface LobbyRepository extends JpaRepository<Lobby, Long> {
     Lobby findById(long id);
+    Lobby findByUserPfList(UserPf userPf);
 }

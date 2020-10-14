@@ -3,6 +3,7 @@ package br.com.payshare.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import javax.validation.constraints.NotNull;
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.Objects;
 
 @Entity
@@ -18,6 +19,9 @@ public class UserPf extends User{
 
     @Column(name = "USER_LOBBY_HOST" , length = 1 , nullable = true , columnDefinition = "boolean default false")
     private boolean userLobbyHost;
+
+    @Column(name = "USER_AMOUNT_LOBBY" , length = 3 , nullable = true)
+    private BigDecimal userAmountLobby;
 
     @ManyToOne
     @JoinColumn(name = "LOBBY_ID")
@@ -74,5 +78,13 @@ public class UserPf extends User{
 
     public void setUserLobbyHost(boolean userLobbyHost) {
         this.userLobbyHost = userLobbyHost;
+    }
+
+    public BigDecimal getUserAmountLobby() {
+        return userAmountLobby;
+    }
+
+    public void setUserAmountLobby(BigDecimal userAmountLobby) {
+        this.userAmountLobby = userAmountLobby;
     }
 }

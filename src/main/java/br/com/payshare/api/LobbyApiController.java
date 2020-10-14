@@ -30,4 +30,7 @@ public interface LobbyApiController {
 
     @PostMapping(path = "/{idLobby}/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<?> addUserLobby(@PathVariable long idLobby, @PathVariable long id);
+
+    @GetMapping(path = "/lobbyUser/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
+    ResponseEntity<?> lobbyUser (@PathVariable long id);
 }

@@ -18,7 +18,7 @@ public class Lobby implements Taxes {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "LOBBY_ID" , nullable = false)
     private long id;
 

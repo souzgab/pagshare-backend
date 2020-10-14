@@ -1,6 +1,7 @@
 package br.com.payshare.serviceImpl;
 
 import br.com.payshare.model.Lobby;
+import br.com.payshare.model.UserPf;
 import br.com.payshare.repository.LobbyRepository;
 import br.com.payshare.service.LobbyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,5 +38,10 @@ public class LobbyServiceImpl implements LobbyService {
     @Override
     public List<Lobby> findAll() {
         return lobbyRepository.findAll();
+    }
+
+    @Override
+    public Lobby findByUserPfList(UserPf userPf) {
+        return lobbyRepository.findByUserPfList(userPf);
     }
 }
