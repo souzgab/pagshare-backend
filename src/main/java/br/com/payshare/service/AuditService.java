@@ -1,10 +1,10 @@
 package br.com.payshare.service;
-
 import br.com.payshare.model.Audit;
 
-import java.math.BigDecimal;
+import java.util.List;
 
 public interface AuditService {
-    void insertAmount(Audit amount);
-    void auditInfo();
+    Audit findById(long id);
+    Audit save(Audit audit);
+    List<Audit> findAll();
 }

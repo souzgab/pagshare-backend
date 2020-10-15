@@ -11,8 +11,9 @@ import java.util.Objects;
 @Table(name = "AUDIT")
 public class Audit {
 
+    private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "AUDIT_ID" , nullable = false)
     private long id;
 
