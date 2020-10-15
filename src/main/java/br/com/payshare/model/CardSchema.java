@@ -1,5 +1,5 @@
 package br.com.payshare.model;
-/*** @Autor vinicius Alves ***/
+
 public class CardSchema {
     private String cardNumber;
     private String expirationDate;
