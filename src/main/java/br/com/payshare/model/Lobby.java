@@ -6,6 +6,7 @@ import javax.validation.constraints.NotNull;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -14,7 +15,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "Lobby")
-public class Lobby implements Taxes {
+public class Lobby implements Taxes , Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
