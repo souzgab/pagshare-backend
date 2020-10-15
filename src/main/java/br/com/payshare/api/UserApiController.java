@@ -11,6 +11,7 @@ import java.util.List;
 
 @RequestMapping(PayshareApplication.API_PREFIX + "/payshare/user")
 public interface UserApiController {
+
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<List<UserPf>> findAll();
 
