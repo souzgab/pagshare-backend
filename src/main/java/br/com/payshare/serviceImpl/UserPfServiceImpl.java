@@ -1,5 +1,6 @@
 package br.com.payshare.serviceImpl;
 
+import br.com.payshare.dto.LoginUserDto;
 import br.com.payshare.model.Lobby;
 import br.com.payshare.model.UserPf;
 import br.com.payshare.repository.UserRepository;
@@ -43,5 +44,10 @@ public class UserPfServiceImpl implements UserPfService {
     @Override
     public List<UserPf> findByLobby(Lobby lobby) {
         return userRepository.findByLobby(lobby);
+    }
+
+    @Override
+    public LoginUserDto findByCpf(String cpf) {
+        return userRepository.findByCpf(cpf);
     }
 }
