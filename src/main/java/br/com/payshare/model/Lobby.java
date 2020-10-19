@@ -48,6 +48,10 @@ public class Lobby implements Taxes , Serializable {
     @JsonManagedReference
     private List<UserPf> userPfList = new ArrayList<>();
 
+    @OneToOne
+    @NotNull
+    private Audit auditId;
+
     public Lobby() {
     }
 

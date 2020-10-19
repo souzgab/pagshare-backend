@@ -4,6 +4,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -17,8 +18,8 @@ public class Audit implements Serializable {
     private long id;
 
     @NotNull
-    @Column(name = "LOBBY_QUANTITY" , length = 100 , nullable = false)
-    private Integer lobbyQuantity;
+    @OneToOne
+    private Lobby lobbyId;
 
     @NotNull
     @Column(name = "AMOUNT_TRANSACTED", length = 100, nullable = false)
@@ -27,6 +28,10 @@ public class Audit implements Serializable {
     @NotNull
     @Column(name = "ACTIVED_MEMBERS", nullable = false)
     private Integer activedMembers;
+
+    @NotNull
+    @Column(name = "CREATED_AT", nullable = false)
+    private LocalDateTime createdAt;
 
     public Audit() {
     }
@@ -37,23 +42,36 @@ public class Audit implements Serializable {
         if (o == null || getClass() != o.getClass()) return false;
         Audit audit = (Audit) o;
         return id == audit.id &&
-                Objects.equals(lobbyQuantity, audit.lobbyQuantity) &&
+                Objects.equals(lobbyId, audit.lobbyId) &&
                 Objects.equals(amountTransacted, audit.amountTransacted) &&
-                Objects.equals(activedMembers, audit.activedMembers);
+                Objects.equals(activedMembers, audit.activedMembers) &&
+                Objects.equals(createdAt, audit.createdAt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, lobbyQuantity, amountTransacted, activedMembers);
+        return Objects.hash(id, lobbyId, amountTransacted, activedMembers,createdAt);
     }
 
     public long getId() {return id;}
 
     public void setId(long id) {this.id = id;}
 
-    public int getLobbyQuantity() {return lobbyQuantity;}
+    public Lobby getLobbyId() {
+        return lobbyId;
+    }
 
-    public void setLobbyQuantity(int lobbyQuantity) {this.lobbyQuantity = lobbyQuantity; }
+    public void setLobbyId(Lobby lobbyId) {
+        this.lobbyId = lobbyId;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 
     public BigDecimal getAmountTransacted() {return amountTransacted;}
 
