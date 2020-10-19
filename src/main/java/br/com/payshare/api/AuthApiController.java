@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @RequestMapping(PayshareApplication.API_PREFIX + "/payshare/auth")
-public interface AuthController {
+public interface AuthApiController {
 
     @PostMapping
     ResponseEntity<?> auth(@RequestBody LoginUserDto user);

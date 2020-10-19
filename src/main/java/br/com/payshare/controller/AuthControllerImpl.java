@@ -1,8 +1,7 @@
 package br.com.payshare.controller;
 
-import br.com.payshare.api.AuthController;
+import br.com.payshare.api.AuthApiController;
 import br.com.payshare.dto.LoginUserDto;
-import br.com.payshare.repository.UserRepository;
 import br.com.payshare.service.UserPfService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class AuthControllerImpl implements AuthController {
+public class AuthControllerImpl implements AuthApiController {
 
     private UserPfService userPfService;
 
