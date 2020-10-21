@@ -43,7 +43,7 @@ public class Lobby implements Taxes , Serializable {
     @Convert(converter = Jsr310JpaConverters.LocalDateTimeConverter.class)
     private LocalDateTime expirationDate;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany
     @JoinColumn(name = "LOBBY_ID")
     @JsonManagedReference
     private List<UserPf> userPfList = new ArrayList<>();

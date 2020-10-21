@@ -87,8 +87,13 @@ public class LobbyController implements LobbyApiController {
     @Override
     public ResponseEntity<Void> delete(long id) {
         Lobby lobbyEntity = lobbyService.findById(id);
+        List<UserPf> userPfList = userPfService.findByLobby(lobbyEntity);
         if (lobbyEntity == null) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+        for (UserPf userPf: userPfList){
+            userPf.setUserAmountLobby(null);
+            userPf.setUserLobbyHost(false);
         }
         lobbyService.deleteById(id);
         return new ResponseEntity<Void>(HttpStatus.OK);
