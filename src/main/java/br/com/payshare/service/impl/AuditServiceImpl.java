@@ -1,4 +1,4 @@
-package br.com.payshare.serviceImpl;
+package br.com.payshare.service.impl;
 
 import br.com.payshare.model.Audit;
 import br.com.payshare.repository.AuditRepository;

@@ -1,5 +1,6 @@
 package br.com.payshare.service;
 
+import br.com.payshare.dto.LoginUserDto;
 import br.com.payshare.model.Lobby;
 import br.com.payshare.model.UserPf;
 
@@ -11,4 +12,5 @@ public interface UserPfService {
     void deleteById(long id);
     List<UserPf> findAll();
     List<UserPf> findByLobby(Lobby lobby);
+    LoginUserDto findByCpf(String cpf);
 }
