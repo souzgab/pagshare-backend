@@ -1,5 +1,10 @@
 package br.com.payshare.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import org.apache.tomcat.jni.Local;
+import org.hibernate.annotations.Cascade;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -13,13 +18,12 @@ public class Audit implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "AUDIT_ID" , nullable = false)
     private long id;
 
-    @NotNull
-    @OneToOne
-    private Lobby lobbyId;
+    @OneToOne(cascade=CascadeType.ALL)
+    private Lobby fk;
 
     @NotNull
     @Column(name = "AMOUNT_TRANSACTED", length = 100, nullable = false)
@@ -33,6 +37,9 @@ public class Audit implements Serializable {
     @Column(name = "CREATED_AT", nullable = false)
     private LocalDateTime createdAt;
 
+    @Column(updatable = true, name = "UPDATED_AT")
+    private LocalDateTime updatedAt;
+
     public Audit() {
     }
 
@@ -42,7 +49,7 @@ public class Audit implements Serializable {
         if (o == null || getClass() != o.getClass()) return false;
         Audit audit = (Audit) o;
         return id == audit.id &&
-                Objects.equals(lobbyId, audit.lobbyId) &&
+                Objects.equals(fk, audit.fk) &&
                 Objects.equals(amountTransacted, audit.amountTransacted) &&
                 Objects.equals(activedMembers, audit.activedMembers) &&
                 Objects.equals(createdAt, audit.createdAt);
@@ -50,7 +57,7 @@ public class Audit implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, lobbyId, amountTransacted, activedMembers,createdAt);
+        return Objects.hash(id, fk, amountTransacted, activedMembers,createdAt);
     }
 
     public long getId() {return id;}
@@ -58,11 +65,11 @@ public class Audit implements Serializable {
     public void setId(long id) {this.id = id;}
 
     public Lobby getLobbyId() {
-        return lobbyId;
+        return fk;
     }
 
     public void setLobbyId(Lobby lobbyId) {
-        this.lobbyId = lobbyId;
+        this.fk = lobbyId;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -71,6 +78,14 @@ public class Audit implements Serializable {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     public BigDecimal getAmountTransacted() {return amountTransacted;}

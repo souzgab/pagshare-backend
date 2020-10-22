@@ -1,8 +1,12 @@
 package br.com.payshare.model;
 
 import br.com.payshare.interfaces.Taxes;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import javax.validation.constraints.NotNull;
+
+import org.hibernate.annotations.Cascade;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 
 import javax.persistence.*;
@@ -43,14 +47,14 @@ public class Lobby implements Taxes , Serializable {
     @Convert(converter = Jsr310JpaConverters.LocalDateTimeConverter.class)
     private LocalDateTime expirationDate;
 
+//    @JsonIgnore // descomentar caso queira que a lobby enxergue a auditID que ela tem
+//    @OneToOne(cascade=CascadeType.ALL)
+//    private Audit fk;
+
     @OneToMany
     @JoinColumn(name = "LOBBY_ID")
     @JsonManagedReference
     private List<UserPf> userPfList = new ArrayList<>();
-
-    @OneToOne
-    @NotNull
-    private Audit auditId;
 
     public Lobby() {
     }
@@ -129,4 +133,12 @@ public class Lobby implements Taxes , Serializable {
     public void setUserPfList(List<UserPf> userPfList) {
         this.userPfList = userPfList;
     }
+
+//    public Audit getFk() {
+//        return fk;
+//    }
+//
+//    public void setFk(Audit fk) {
+//        this.fk = fk;
+//    }
 }

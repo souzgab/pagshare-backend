@@ -1,6 +1,7 @@
 package br.com.payshare.service.impl;
 
 import br.com.payshare.model.Audit;
+import br.com.payshare.model.Lobby;
 import br.com.payshare.repository.AuditRepository;
 import br.com.payshare.service.AuditService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,5 +32,11 @@ public class AuditServiceImpl implements AuditService {
     @Override
     public List<Audit> findAll() {
         return auditRepository.findAll();
+    }
+
+    @Override
+    public Audit findAuditByFkId(long l) {
+        Audit a = auditRepository.findAuditByFkId(l);
+        return a;
     }
 }
