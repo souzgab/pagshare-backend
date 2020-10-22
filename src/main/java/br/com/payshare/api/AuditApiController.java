@@ -16,4 +16,7 @@ public interface AuditApiController {
 
     @GetMapping(value = "/download/csv", produces = MediaType.ALL_VALUE)
     ResponseEntity<?> downloadCSV();
+
+    @GetMapping(value = "/download/txt", produces = MediaType.ALL_VALUE)
+    ResponseEntity<?> downloadTxt();
 }

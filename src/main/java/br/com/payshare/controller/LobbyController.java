@@ -2,8 +2,10 @@ package br.com.payshare.controller;
 
 
 import br.com.payshare.api.LobbyApiController;
+import br.com.payshare.model.Audit;
 import br.com.payshare.model.Lobby;
 import br.com.payshare.model.UserPf;
+import br.com.payshare.service.AuditService;
 import br.com.payshare.service.LobbyService;
 import br.com.payshare.service.UserPfService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +23,13 @@ public class LobbyController implements LobbyApiController {
 
     LobbyService lobbyService;
     UserPfService userPfService;
+    AuditService auditService;
 
     @Autowired
-    public LobbyController(LobbyService lobbyService, UserPfService userPfService) {
+    public LobbyController(LobbyService lobbyService, UserPfService userPfService, AuditService auditService) {
         this.lobbyService = lobbyService;
         this.userPfService = userPfService;
+        this.auditService = auditService;
     }
 
     @Override
@@ -57,6 +61,8 @@ public class LobbyController implements LobbyApiController {
         lobby.setCreationDate(now);
         lobby.setExpirationDate(now.plusHours(48));
         lobby.setUserPfList(userPfList);
+        Audit auditGenerated = gerarAudit(now, lobby);
+        auditService.save(auditGenerated);
         return new ResponseEntity<>(lobbyService.save(lobby), HttpStatus.OK);
     }
 
@@ -71,9 +77,14 @@ public class LobbyController implements LobbyApiController {
         for (UserPf userPf1 : userPfList){
             userPf1.setUserAmountLobby(lobby.getAmount().divide(new BigDecimal(userPfList.size())));
             userPf1.setLobby(lobby);
-            userPfService.save(userPf1);
+            try{
+                lobbyService.save(lobby);
+                userPfService.save(userPf1);
+            }catch (Exception e){
+                System.out.println("Erro ao salvar enti: " + e.getMessage());
+            }
         }
-        return new ResponseEntity<>(lobbyService.save(lobby), HttpStatus.OK);
+        return new ResponseEntity<>(lobby, HttpStatus.OK);
     }
 
     @Override
@@ -106,5 +117,18 @@ public class LobbyController implements LobbyApiController {
         if (userPf == null || lobby == null)
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(lobby , HttpStatus.OK);
+    }
+
+    public Audit gerarAudit(LocalDateTime horaCriado, Lobby lobby){
+        Audit auditBegin = new Audit();
+        try{
+            auditBegin.setActivedMembers(lobby.getUserPfList().size());
+            auditBegin.setAmountTransacted(lobby.getAmount());
+            auditBegin.setCreatedAt(horaCriado);
+            auditBegin.setLobbyId(lobby);
+        }catch (Exception e){
+            System.out.println("Deu ruim na audit" + horaCriado);
+        }
+        return auditBegin;
     }
 }

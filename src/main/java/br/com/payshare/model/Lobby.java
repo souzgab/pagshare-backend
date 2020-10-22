@@ -1,8 +1,11 @@
 package br.com.payshare.model;
 
 import br.com.payshare.interfaces.Taxes;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import javax.validation.constraints.NotNull;
+
+import org.hibernate.annotations.Cascade;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 
 import javax.persistence.*;
@@ -47,10 +50,6 @@ public class Lobby implements Taxes , Serializable {
     @JoinColumn(name = "LOBBY_ID")
     @JsonManagedReference
     private List<UserPf> userPfList = new ArrayList<>();
-
-    @OneToOne
-    @NotNull
-    private Audit auditId;
 
     public Lobby() {
     }
@@ -129,4 +128,5 @@ public class Lobby implements Taxes , Serializable {
     public void setUserPfList(List<UserPf> userPfList) {
         this.userPfList = userPfList;
     }
+
 }

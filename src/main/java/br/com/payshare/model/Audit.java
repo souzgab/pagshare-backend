@@ -1,5 +1,9 @@
 package br.com.payshare.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import org.hibernate.annotations.Cascade;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -17,8 +21,7 @@ public class Audit implements Serializable {
     @Column(name = "AUDIT_ID" , nullable = false)
     private long id;
 
-    @NotNull
-    @OneToOne
+    @OneToOne(cascade=CascadeType.ALL)
     private Lobby lobbyId;
 
     @NotNull
