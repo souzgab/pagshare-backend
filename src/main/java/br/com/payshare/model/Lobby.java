@@ -2,6 +2,7 @@ package br.com.payshare.model;
 
 import br.com.payshare.interfaces.Taxes;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import javax.validation.constraints.NotNull;
 
@@ -45,6 +46,10 @@ public class Lobby implements Taxes , Serializable {
     @Column(name = "LOBBY_EXPIRATION_DATE")
     @Convert(converter = Jsr310JpaConverters.LocalDateTimeConverter.class)
     private LocalDateTime expirationDate;
+
+//    @JsonIgnore // descomentar caso queira que a lobby enxergue a auditID que ela tem
+//    @OneToOne(cascade=CascadeType.ALL)
+//    private Audit fk;
 
     @OneToMany
     @JoinColumn(name = "LOBBY_ID")
@@ -129,4 +134,11 @@ public class Lobby implements Taxes , Serializable {
         this.userPfList = userPfList;
     }
 
+//    public Audit getFk() {
+//        return fk;
+//    }
+//
+//    public void setFk(Audit fk) {
+//        this.fk = fk;
+//    }
 }

@@ -63,6 +63,7 @@ public class LobbyController implements LobbyApiController {
         lobby.setUserPfList(userPfList);
         Audit auditGenerated = gerarAudit(now, lobby);
         auditService.save(auditGenerated);
+//        lobby.setFk(auditGenerated);
         return new ResponseEntity<>(lobbyService.save(lobby), HttpStatus.OK);
     }
 
@@ -71,6 +72,8 @@ public class LobbyController implements LobbyApiController {
         UserPf userPf = userPfService.findByUserId(id);
         Lobby lobby = lobbyService.findById(idLobby);
         List<UserPf> userPfList = userPfService.findByLobby(lobby);
+        Audit audit = auditService.findAuditByFkId(lobby.getId());
+
         if (userPf.getLobby() != null)
             return new ResponseEntity<>("You_are_already_associated_with_a_lobby" , HttpStatus.BAD_REQUEST);
         userPfList.add(userPf);
@@ -80,8 +83,10 @@ public class LobbyController implements LobbyApiController {
             try{
                 lobbyService.save(lobby);
                 userPfService.save(userPf1);
+                audit.setActivedMembers(audit.getActivedMembers() + 1);
+                audit.setUpdatedAt(LocalDateTime.now());
             }catch (Exception e){
-                System.out.println("Erro ao salvar enti: " + e.getMessage());
+                System.out.println("Erro ao salvar entidade: " + e.getMessage());
             }
         }
         return new ResponseEntity<>(lobby, HttpStatus.OK);
@@ -127,7 +132,7 @@ public class LobbyController implements LobbyApiController {
             auditBegin.setCreatedAt(horaCriado);
             auditBegin.setLobbyId(lobby);
         }catch (Exception e){
-            System.out.println("Deu ruim na audit" + horaCriado);
+            System.out.println("Failed to create: " + horaCriado + "Erro: " + e.getMessage());
         }
         return auditBegin;
     }
