@@ -56,6 +56,7 @@ public class AuditController implements AuditApiController {
         String amount = "AMOUNT_TRANSACTED";
         String members = "ACTIVED_MEMBERS";
         String createdAt = "CREATED_AT";
+        String updatedAt = "UPDATED_AT";
 
         HttpHeaders headers = new HttpHeaders();
 
@@ -71,9 +72,9 @@ public class AuditController implements AuditApiController {
         }
 
         try{
-            saida.format("%s;%s;%s;%s;%s;",auditId,lobbyId,amount,members,createdAt);
+            saida.format("%s;%s;%s;%s;%s\n",auditId,amount,members,createdAt,updatedAt);
             for (Audit a : auditData){
-                saida.format("%d;%d;%f;%d;%s\n",a.getId(),a.getLobbyId(),a.getAmountTransacted(),a.getActivedMembers(),a.getCreatedAt().toString());
+                saida.format("%d;%f;%d;%s;%s\n",a.getId(),a.getAmountTransacted(),a.getActivedMembers(),a.getCreatedAt().toString() , a.getUpdatedAt().toString());
             }
         }
         catch (FormatterClosedException e) {
@@ -110,7 +111,7 @@ public class AuditController implements AuditApiController {
         Date dataDeHoje = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 
-        header += "00_ID_CREATEDAT_ACTIVEDMEMBERS_AMOUNTTRANSACTED_LOBBYIDFK";
+        header += "00_ID_CREATEDAT_ACTIVEDMEMBERS_AMOUNTTRANSACTED_UPDATEDAT";
         header += formatter.format(dataDeHoje);
         header += "01";
 
@@ -122,8 +123,8 @@ public class AuditController implements AuditApiController {
             corpo += String.format("%-5d", a.getId());
             corpo += String.format("%-15s", a.getCreatedAt());
             corpo += String.format("%-5d", a.getActivedMembers());
-            corpo += String.format("%-10d", a.getAmountTransacted());
-            corpo += String.format("%-5d", a.getLobbyId());
+            corpo += String.format("%-10s", a.getAmountTransacted().toString());
+            corpo += String.format("%-12s", a.getUpdatedAt());
             contRegDados++;
             gravaRegistro(nomeArquivo,corpo);
         }

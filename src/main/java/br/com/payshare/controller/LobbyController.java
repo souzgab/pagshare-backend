@@ -130,6 +130,7 @@ public class LobbyController implements LobbyApiController {
             auditBegin.setActivedMembers(lobby.getUserPfList().size());
             auditBegin.setAmountTransacted(lobby.getAmount());
             auditBegin.setCreatedAt(horaCriado);
+            auditBegin.setUpdatedAt(horaCriado);
             auditBegin.setLobbyId(lobby);
         }catch (Exception e){
             System.out.println("Failed to create: " + horaCriado + "Erro: " + e.getMessage());
