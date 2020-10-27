@@ -16,6 +16,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Formatter;
@@ -64,7 +65,7 @@ public class AuditController implements AuditApiController {
         headers.add("Content-Type", "text/csv");
 
         try {
-            arq = new FileWriter(dirPath + nomeArquivo, false);
+            arq = new FileWriter(dirPath + nomeArquivo, true);
             saida = new Formatter(arq);
         }
         catch (IOException e) {
@@ -73,8 +74,17 @@ public class AuditController implements AuditApiController {
 
         try{
             saida.format("%s;%s;%s;%s;%s\n",auditId,amount,members,createdAt,updatedAt);
-            for (Audit a : auditData){
-                saida.format("%d;%f;%d;%s;%s\n",a.getId(),a.getAmountTransacted(),a.getActivedMembers(),a.getCreatedAt().toString() , a.getUpdatedAt().toString());
+            try{
+                DecimalFormat df = new DecimalFormat();
+                df.setMaximumFractionDigits(2);
+                df.setMinimumFractionDigits(0);
+                df.setGroupingUsed(false);
+                for (Audit a : auditData){
+                    String valor = df.format(a.getAmountTransacted()).replace(",", ".");
+                    saida.format("%s;%d;%s;%s;%s\n", a.getId(),a.getActivedMembers(), valor, a.getCreatedAt().toString(), a.getUpdatedAt());
+                }
+            }catch (Exception e){
+                System.out.println("Erro " + e.getMessage() + e.getCause());
             }
         }
         catch (FormatterClosedException e) {
