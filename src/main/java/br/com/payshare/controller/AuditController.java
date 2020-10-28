@@ -16,6 +16,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Formatter;
@@ -52,7 +53,6 @@ public class AuditController implements AuditApiController {
         String dirPath = "src\\main\\resources\\static\\";
         String nomeArquivo = "audit.csv";
         String auditId = "AUDIT_ID";
-        String lobbyId = "LOBBY_ID";
         String amount = "AMOUNT_TRANSACTED";
         String members = "ACTIVED_MEMBERS";
         String createdAt = "CREATED_AT";
@@ -64,7 +64,7 @@ public class AuditController implements AuditApiController {
         headers.add("Content-Type", "text/csv");
 
         try {
-            arq = new FileWriter(dirPath + nomeArquivo, false);
+            arq = new FileWriter(dirPath + nomeArquivo, true);
             saida = new Formatter(arq);
         }
         catch (IOException e) {
@@ -73,8 +73,17 @@ public class AuditController implements AuditApiController {
 
         try{
             saida.format("%s;%s;%s;%s;%s\n",auditId,amount,members,createdAt,updatedAt);
-            for (Audit a : auditData){
-                saida.format("%d;%f;%d;%s;%s\n",a.getId(),a.getAmountTransacted(),a.getActivedMembers(),a.getCreatedAt().toString() , a.getUpdatedAt().toString());
+            try{
+                DecimalFormat df = new DecimalFormat();
+                df.setMaximumFractionDigits(2);
+                df.setMinimumFractionDigits(0);
+                df.setGroupingUsed(false);
+                for (Audit a : auditData){
+                    String valor = df.format(a.getAmountTransacted()).replace(",", ".");
+                    saida.format("%s;%d;%s;%s;%s\n", a.getId(),a.getActivedMembers(), valor, a.getCreatedAt().toString(), a.getUpdatedAt());
+                }
+            }catch (Exception e){
+                System.out.println("Erro " + e.getMessage());
             }
         }
         catch (FormatterClosedException e) {
@@ -111,25 +120,31 @@ public class AuditController implements AuditApiController {
         Date dataDeHoje = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 
-        header += "00_ID_CREATEDAT_ACTIVEDMEMBERS_AMOUNTTRANSACTED_UPDATEDAT";
+        header += String.format("%-3s", "00");
+        header += String.format("%-5s", "ID");
+        header += String.format("%-25s", "CREATED_AT");
+        header += String.format("%-10s", "MEMBERS");
+        header += String.format("%-10s", "AMOUNT");
+        header += String.format("%-20s", "UPDATED_AT");
+        header += String.format("%-15s", "TXT_CRIADO_EM:    ");
         header += formatter.format(dataDeHoje);
-        header += "01";
+        header += " 01";
 
         gravaRegistro(nomeArquivo, header);
 
         for (Audit a : auditData){
             corpo = "";
-            corpo += "99";
+            corpo += String.format("%-3s", "99");
             corpo += String.format("%-5d", a.getId());
-            corpo += String.format("%-15s", a.getCreatedAt());
-            corpo += String.format("%-5d", a.getActivedMembers());
+            corpo += String.format("%-25s", a.getCreatedAt());
+            corpo += String.format("%-10d", a.getActivedMembers());
             corpo += String.format("%-10s", a.getAmountTransacted().toString());
-            corpo += String.format("%-12s", a.getUpdatedAt());
+            corpo += String.format("%-20s", a.getUpdatedAt());
             contRegDados++;
             gravaRegistro(nomeArquivo,corpo);
         }
 
-        trailer += "01";
+        trailer += String.format("%-3s", "01");
         trailer += String.format("%010d", contRegDados);
         gravaRegistro(nomeArquivo,trailer);
 
