@@ -7,5 +7,4 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface AuditRepository extends JpaRepository <Audit,Long> {
     Audit findById(long id);
-    Audit findAuditByFkId(long l);
 }

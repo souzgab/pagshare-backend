@@ -33,10 +33,4 @@ public class AuditServiceImpl implements AuditService {
     public List<Audit> findAll() {
         return auditRepository.findAll();
     }
-
-    @Override
-    public Audit findAuditByFkId(long l) {
-        Audit a = auditRepository.findAuditByFkId(l);
-        return a;
-    }
 }

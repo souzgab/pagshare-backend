@@ -47,10 +47,6 @@ public class Lobby implements Taxes , Serializable {
     @Convert(converter = Jsr310JpaConverters.LocalDateTimeConverter.class)
     private LocalDateTime expirationDate;
 
-//    @JsonIgnore // descomentar caso queira que a lobby enxergue a auditID que ela tem
-//    @OneToOne(cascade=CascadeType.ALL)
-//    private Audit fk;
-
     @OneToMany
     @JoinColumn(name = "LOBBY_ID")
     @JsonManagedReference

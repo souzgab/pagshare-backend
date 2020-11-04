@@ -1,10 +1,5 @@
 package br.com.payshare.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import org.apache.tomcat.jni.Local;
-import org.hibernate.annotations.Cascade;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -22,8 +17,8 @@ public class Audit implements Serializable {
     @Column(name = "AUDIT_ID" , nullable = false)
     private long id;
 
-    @OneToOne(cascade=CascadeType.ALL)
-    private Lobby fk;
+    @Column(name = "LOBBY_ID" , nullable = false)
+    private long idLobby;
 
     @NotNull
     @Column(name = "AMOUNT_TRANSACTED", length = 100, nullable = false)
@@ -49,27 +44,48 @@ public class Audit implements Serializable {
         if (o == null || getClass() != o.getClass()) return false;
         Audit audit = (Audit) o;
         return id == audit.id &&
-                Objects.equals(fk, audit.fk) &&
+                idLobby == audit.idLobby &&
                 Objects.equals(amountTransacted, audit.amountTransacted) &&
                 Objects.equals(activedMembers, audit.activedMembers) &&
-                Objects.equals(createdAt, audit.createdAt);
+                Objects.equals(createdAt, audit.createdAt) &&
+                Objects.equals(updatedAt, audit.updatedAt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, fk, amountTransacted, activedMembers,createdAt);
+        return Objects.hash(id, idLobby, amountTransacted, activedMembers, createdAt, updatedAt);
     }
 
-    public long getId() {return id;}
-
-    public void setId(long id) {this.id = id;}
-
-    public Lobby getLobbyId() {
-        return fk;
+    public long getId() {
+        return id;
     }
 
-    public void setLobbyId(Lobby lobbyId) {
-        this.fk = lobbyId;
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public long getIdLobby() {
+        return idLobby;
+    }
+
+    public void setIdLobby(long idLobby) {
+        this.idLobby = idLobby;
+    }
+
+    public BigDecimal getAmountTransacted() {
+        return amountTransacted;
+    }
+
+    public void setAmountTransacted(BigDecimal amountTransacted) {
+        this.amountTransacted = amountTransacted;
+    }
+
+    public Integer getActivedMembers() {
+        return activedMembers;
+    }
+
+    public void setActivedMembers(Integer activedMembers) {
+        this.activedMembers = activedMembers;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -87,12 +103,4 @@ public class Audit implements Serializable {
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
-
-    public BigDecimal getAmountTransacted() {return amountTransacted;}
-
-    public void setAmountTransacted(BigDecimal amountTransacted) {this.amountTransacted = amountTransacted;}
-
-    public int getActivedMembers() {return activedMembers;}
-
-    public void setActivedMembers(int activedMembers) {this.activedMembers = activedMembers;}
 }
