@@ -17,13 +17,17 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 @RestController
-public class LobbyController implements LobbyApiController {
+public class LobbyController extends Observable implements LobbyApiController {
 
     LobbyService lobbyService;
     UserPfService userPfService;
     AuditService auditService;
+
+    public LobbyController(){};
 
     @Autowired
     public LobbyController(LobbyService lobbyService, UserPfService userPfService, AuditService auditService) {
@@ -61,7 +65,10 @@ public class LobbyController implements LobbyApiController {
         lobby.setCreationDate(now);
         lobby.setExpirationDate(now.plusHours(48));
         lobby.setUserPfList(userPfList);
-        return new ResponseEntity<>(lobbyService.save(lobby), HttpStatus.OK);
+        lobbyService.save(lobby);
+        this.addObserver(new AuditController());
+        this.notificar(lobby);
+        return new ResponseEntity<>(lobby, HttpStatus.OK);
     }
 
     @Override
@@ -118,4 +125,18 @@ public class LobbyController implements LobbyApiController {
         return new ResponseEntity<>(lobby , HttpStatus.OK);
     }
 
+    @Override
+    public synchronized void addObserver(Observer o) {
+        super.addObserver(o);
+    }
+
+    @Override
+    public void notifyObservers(Object arg) {
+        super.notifyObservers(arg);
+    }
+
+    private void notificar(Lobby l) {
+        setChanged();
+        notifyObservers(l);
+    }
 }

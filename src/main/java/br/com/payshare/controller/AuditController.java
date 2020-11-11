@@ -2,6 +2,7 @@ package br.com.payshare.controller;
 
 import br.com.payshare.api.AuditApiController;
 import br.com.payshare.model.Audit;
+import br.com.payshare.model.Lobby;
 import br.com.payshare.service.AuditService;
 import br.com.payshare.service.LobbyService;
 import br.com.payshare.service.UserPfService;
@@ -18,17 +19,17 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Formatter;
-import java.util.FormatterClosedException;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @RestController
-public class AuditController implements AuditApiController {
+public class AuditController implements AuditApiController, Observer {
 
     LobbyService lobbyService;
     UserPfService userPfService;
     AuditService auditService;
+
+    public AuditController(){};
 
     @Autowired
     public AuditController(LobbyService lobbyService, UserPfService userPfService, AuditService auditService) {
@@ -166,5 +167,30 @@ public class AuditController implements AuditApiController {
         } catch (IOException e) {
             System.err.printf("Erro ao gravar arquivo: %s.\n", e.getMessage());
         }
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        try {
+            if (arg instanceof Lobby){
+                Lobby lobby = (Lobby) arg;
+                LobbyController lobbyController = (LobbyController) o;
+                Audit generatedAudit = generateAudit(lobby);
+                lobbyController.auditService.save(generatedAudit);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private Audit generateAudit(Lobby l) {
+        Audit audit = new Audit();
+        LocalDateTime now = LocalDateTime.now();
+        audit.setAmountTransacted(l.getAmount());
+        audit.setIdLobby(l.getId());
+        audit.setActivedMembers(l.getUserPfList().size());
+        audit.setCreatedAt(l.getCreationDate());
+        audit.setUpdatedAt(now);
+        return audit;
     }
 }

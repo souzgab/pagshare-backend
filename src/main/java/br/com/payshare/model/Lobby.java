@@ -130,11 +130,16 @@ public class Lobby implements Taxes , Serializable {
         this.userPfList = userPfList;
     }
 
-//    public Audit getFk() {
-//        return fk;
-//    }
-//
-//    public void setFk(Audit fk) {
-//        this.fk = fk;
-//    }
+    @Override
+    public String toString() {
+        return "Lobby{" +
+                "id=" + id +
+                ", lobbyDescription='" + lobbyDescription + '\'' +
+                ", orderDescription='" + orderDescription + '\'' +
+                ", amount=" + amount +
+                ", creationDate=" + creationDate +
+                ", expirationDate=" + expirationDate +
+                ", userPfList=" + userPfList +
+                '}';
+    }
 }

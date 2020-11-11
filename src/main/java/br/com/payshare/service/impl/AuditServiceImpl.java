@@ -33,4 +33,5 @@ public class AuditServiceImpl implements AuditService {
     public List<Audit> findAll() {
         return auditRepository.findAll();
     }
+
 }
