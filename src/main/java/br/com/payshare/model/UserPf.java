@@ -1,9 +1,13 @@
 package br.com.payshare.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import org.hibernate.annotations.Cascade;
+
 import javax.validation.constraints.NotNull;
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -28,6 +32,10 @@ public class UserPf extends User{
     @JsonBackReference
     private Lobby lobby;
 
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "ROLES_ID")
+    List<Roles> roles = new ArrayList<>();
+
     public UserPf() {
 
     }
@@ -42,6 +50,8 @@ public class UserPf extends User{
                 Objects.equals(rg, userPf.rg) &&
                 Objects.equals(lobby, userPf.lobby);
     }
+
+
 
     @Override
     public int hashCode() {
@@ -86,5 +96,13 @@ public class UserPf extends User{
 
     public void setUserAmountLobby(BigDecimal userAmountLobby) {
         this.userAmountLobby = userAmountLobby;
+    }
+
+    public List<Roles> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<Roles> roles) {
+        this.roles = roles;
     }
 }

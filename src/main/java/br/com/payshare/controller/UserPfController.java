@@ -54,7 +54,7 @@ public class UserPfController implements UserApiController {
             userPfService.save(userPf);
             return new ResponseEntity<>(null, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -74,6 +74,5 @@ public class UserPfController implements UserApiController {
         userPfService.deleteById(id);
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
-
 
 }
