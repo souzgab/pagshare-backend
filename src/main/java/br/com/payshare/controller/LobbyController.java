@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -81,13 +82,17 @@ public class LobbyController extends Observable implements LobbyApiController {
             return new ResponseEntity<>("You_are_already_associated_with_a_lobby" , HttpStatus.BAD_REQUEST);
         userPfList.add(userPf);
         for (UserPf userPf1 : userPfList){
-            userPf1.setUserAmountLobby(lobby.getAmount().divide(new BigDecimal(userPfList.size())));
+            userPf1.setUserAmountLobby(lobby.getAmount().divide(new BigDecimal(userPfList.size()),2, RoundingMode.HALF_UP));
             userPf1.setLobby(lobby);
             try{
                 lobbyService.save(lobby);
                 userPfService.save(userPf1);
             }catch (Exception e){
                 System.out.println("Erro ao salvar entidade: " + e.getMessage());
+            }finally {
+                System.out.println(lobby.toString());
+                this.addObserver(new AuditController());
+                this.notificar(lobby);
             }
         }
         return new ResponseEntity<>(lobby, HttpStatus.OK);
@@ -96,9 +101,14 @@ public class LobbyController extends Observable implements LobbyApiController {
     @Override
     public ResponseEntity<?> update(Lobby lobby, long id) throws InstantiationException, IllegalAccessException {
         Lobby lobbyEntity = lobbyService.findById(id);
-        if (lobbyEntity == null)
+        if (lobbyEntity == null){
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(lobbyService.save(lobby), HttpStatus.OK);
+        }else{
+            this.addObserver(new AuditController());
+            this.notificar(lobbyEntity);
+            lobbyService.save(lobby);
+        }
+        return new ResponseEntity<>(lobby, HttpStatus.OK);
     }
 
     @Override

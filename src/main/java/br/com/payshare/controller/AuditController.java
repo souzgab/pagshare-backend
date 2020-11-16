@@ -171,12 +171,22 @@ public class AuditController implements AuditApiController, Observer {
 
     @Override
     public void update(Observable o, Object arg) {
+        LocalDateTime now = LocalDateTime.now();
         try {
             if (arg instanceof Lobby){
                 Lobby lobby = (Lobby) arg;
                 LobbyController lobbyController = (LobbyController) o;
-                Audit generatedAudit = generateAudit(lobby);
-                lobbyController.auditService.save(generatedAudit);
+                if(lobbyController.auditService.findByIdLobby(lobby.getId()) != null){
+                    System.out.println("entrreii");
+                    Audit audit = lobbyController.auditService.findByIdLobby(lobby.getId());
+                    audit.setActivedMembers(lobby.getUserPfList().size()+1);
+                    audit.setAmountTransacted(lobby.getAmount());
+                    audit.setUpdatedAt(now);
+                    lobbyController.auditService.save(audit);
+                }else{
+                    Audit generatedAudit = generateAudit(lobby);
+                    lobbyController.auditService.save(generatedAudit);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

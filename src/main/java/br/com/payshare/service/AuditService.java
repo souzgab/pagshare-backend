@@ -8,4 +8,5 @@ public interface AuditService {
     Audit findById (long id);
     Audit save (Audit audit);
     List<Audit> findAll();
+    Audit findByIdLobby(long idLobby);
 }
