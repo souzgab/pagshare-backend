@@ -1,9 +1,13 @@
 package br.com.payshare.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.validation.constraints.NotNull;
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -27,6 +31,11 @@ public class UserPf extends User{
     @JoinColumn(name = "LOBBY_ID")
     @JsonBackReference
     private Lobby lobby;
+
+    @OneToMany
+    @JoinColumn(name = "LOBBY_ID")
+    @JsonManagedReference
+    private List<Transaction> transactions = new ArrayList<>();
 
     public UserPf() {
 
@@ -87,4 +96,13 @@ public class UserPf extends User{
     public void setUserAmountLobby(BigDecimal userAmountLobby) {
         this.userAmountLobby = userAmountLobby;
     }
+
+    public List<Transaction> getTransactions() {
+        return transactions;
+    }
+
+    public void setTransactions(List<Transaction> transactions) {
+        this.transactions = transactions;
+    }
+
 }
