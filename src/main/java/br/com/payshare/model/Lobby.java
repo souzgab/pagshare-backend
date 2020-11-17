@@ -52,6 +52,12 @@ public class Lobby implements Taxes , Serializable {
     @JsonManagedReference
     private List<UserPf> userPfList = new ArrayList<>();
 
+    @OneToMany
+    @JoinColumn(name = "LOBBY_ID")
+    @JsonManagedReference
+    private List<Transaction> transactions = new ArrayList<>();
+
+
     public Lobby() {
     }
 
@@ -128,6 +134,14 @@ public class Lobby implements Taxes , Serializable {
 
     public void setUserPfList(List<UserPf> userPfList) {
         this.userPfList = userPfList;
+    }
+
+    public List<Transaction> getTransactions() {
+        return transactions;
+    }
+
+    public void setTransactions(List<Transaction> transactions) {
+        this.transactions = transactions;
     }
 
     @Override

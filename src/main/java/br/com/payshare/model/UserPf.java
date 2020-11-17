@@ -2,7 +2,6 @@ package br.com.payshare.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import org.hibernate.annotations.Cascade;
 
 import javax.validation.constraints.NotNull;
 import javax.persistence.*;
@@ -33,6 +32,11 @@ public class UserPf extends User{
     @JsonBackReference
     private Lobby lobby;
 
+    @OneToMany
+    @JoinColumn(name = "LOBBY_ID")
+    @JsonManagedReference
+    private List<Transaction> transactions = new ArrayList<>();
+
     @ManyToMany()
     @JoinTable(
             name = "users_roles",
@@ -56,8 +60,6 @@ public class UserPf extends User{
                 Objects.equals(rg, userPf.rg) &&
                 Objects.equals(lobby, userPf.lobby);
     }
-
-
 
     @Override
     public int hashCode() {
@@ -102,6 +104,14 @@ public class UserPf extends User{
 
     public void setUserAmountLobby(BigDecimal userAmountLobby) {
         this.userAmountLobby = userAmountLobby;
+    }
+
+    public List<Transaction> getTransactions() {
+        return transactions;
+    }
+
+    public void setTransactions(List<Transaction> transactions) {
+        this.transactions = transactions;
     }
 
     public List<Roles> getRoles() {
