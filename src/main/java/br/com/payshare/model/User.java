@@ -40,7 +40,6 @@ public abstract class User implements Serializable {
 
     @NotNull
     @Column(name = "USER_PASSWORD" , length = 200 , nullable = false)
-    @JsonIgnore
     private String password;
 
     public String getName() {

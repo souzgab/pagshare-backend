@@ -52,9 +52,6 @@ public class AuthController implements AuthApiController {
     @Override
     public ResponseEntity<?> signup(@RequestBody UserPf user) {
 
-        if (!(user instanceof UserPf))
-            return ResponseEntity.badRequest().body("Incorrect object");
-
         if (userPfService.findByEmail(user.getEmail()) != null)
             return ResponseEntity.badRequest().body("User are exists");
 

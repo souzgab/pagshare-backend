@@ -15,7 +15,7 @@ public interface AuthApiController {
     @PostMapping(value = "/login", produces = MediaType.ALL_VALUE)
     ResponseEntity<?> login(@RequestBody LoginUserDto user) throws Exception;
 
-    @PostMapping(value = "/signup", produces = MediaType.ALL_VALUE)
+    @PostMapping(value = "/signup")
     ResponseEntity<?> signup(@RequestBody UserPf user);
 
 }

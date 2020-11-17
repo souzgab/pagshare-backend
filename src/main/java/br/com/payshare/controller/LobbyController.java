@@ -101,12 +101,22 @@ public class LobbyController extends Observable implements LobbyApiController {
     @Override
     public ResponseEntity<?> update(Lobby lobby, long id) throws InstantiationException, IllegalAccessException {
         Lobby lobbyEntity = lobbyService.findById(id);
-        if (lobbyEntity == null){
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        }else{
-            this.addObserver(new AuditController());
-            this.notificar(lobbyEntity);
-            lobbyService.save(lobby);
+        List<UserPf> userPfList = userPfService.findByLobby(lobby);
+        if (lobbyEntity == null)
+            return new ResponseEntity<>("You_are_already_associated_with_a_lobby" , HttpStatus.BAD_REQUEST);
+        for (UserPf userPf1 : userPfList){
+            userPf1.setUserAmountLobby(lobby.getAmount().divide(new BigDecimal(userPfList.size())));
+            lobby.setUserPfList(userPfList);
+            try{
+                lobbyService.save(lobby);
+                userPfService.save(userPf1);
+            }catch (Exception e){
+                System.out.println("Erro ao salvar entidade: " + e.getMessage());
+            }finally {
+                System.out.println(lobby.toString());
+                this.addObserver(new AuditController());
+                this.notificar(lobby);
+            }
         }
         return new ResponseEntity<>(lobby, HttpStatus.OK);
     }

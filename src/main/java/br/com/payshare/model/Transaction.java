@@ -1,6 +1,7 @@
 package br.com.payshare.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -56,12 +57,12 @@ public class Transaction implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "USER_ID")
-    @JsonBackReference
+    @JsonIgnore
     private UserPf userPf;
 
     @ManyToOne
     @JoinColumn(name = "LOBBY_ID")
-    @JsonBackReference
+    @JsonIgnore
     private Lobby lobby;
 
     @Override

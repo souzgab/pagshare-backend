@@ -49,14 +49,11 @@ public class Lobby implements Taxes , Serializable {
 
     @OneToMany
     @JoinColumn(name = "LOBBY_ID")
-    @JsonManagedReference
     private List<UserPf> userPfList = new ArrayList<>();
 
     @OneToMany
     @JoinColumn(name = "LOBBY_ID")
-    @JsonManagedReference
     private List<Transaction> transactions = new ArrayList<>();
-
 
     public Lobby() {
     }

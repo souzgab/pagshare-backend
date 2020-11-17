@@ -34,7 +34,6 @@ public class UserPf extends User{
 
     @OneToMany
     @JoinColumn(name = "LOBBY_ID")
-    @JsonManagedReference
     private List<Transaction> transactions = new ArrayList<>();
 
     @ManyToMany()
