@@ -11,19 +11,17 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+
 @Service
-public class UserDetailsServiceImpl implements UserDetailsService {
+public class CustomUserDetailsService implements UserDetailsService {
 
     @Autowired
-    UserPfService userPfService;
-
+    private UserPfService userPfService;
 
     @Override
-    @Transactional
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        UserPf userPf = userPfService.findByEmail(email);
-
-
-        return UserDetailsImpl.build(userPf);
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        UserPf user = userPfService.findByEmail(username);
+        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), new ArrayList<>());
     }
 }

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public interface AuthApiController {
 
     @PostMapping(value = "/login", produces = MediaType.ALL_VALUE)
-    ResponseEntity<?> login(@RequestBody LoginUserDto user);
+    ResponseEntity<?> login(@RequestBody LoginUserDto user) throws Exception;
 
     @PostMapping(value = "/signup", produces = MediaType.ALL_VALUE)
     ResponseEntity<?> signup(@RequestBody UserPf user);

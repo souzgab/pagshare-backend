@@ -1,6 +1,7 @@
 package br.com.payshare.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.annotations.Cascade;
 
 import javax.validation.constraints.NotNull;
@@ -32,9 +33,14 @@ public class UserPf extends User{
     @JsonBackReference
     private Lobby lobby;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "ROLES_ID")
-    List<Roles> roles = new ArrayList<>();
+    @ManyToMany()
+    @JoinTable(
+            name = "users_roles",
+            joinColumns = @JoinColumn(
+                    name = "user_id", referencedColumnName = "user_id"),
+            inverseJoinColumns = @JoinColumn(
+                    name = "role_id", referencedColumnName = "id"))
+    private List<Roles> roles;
 
     public UserPf() {
 
