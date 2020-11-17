@@ -37,6 +37,15 @@ public class UserPf extends User{
     @JsonManagedReference
     private List<Transaction> transactions = new ArrayList<>();
 
+    @ManyToMany()
+    @JoinTable(
+            name = "users_roles",
+            joinColumns = @JoinColumn(
+                    name = "user_id", referencedColumnName = "user_id"),
+            inverseJoinColumns = @JoinColumn(
+                    name = "role_id", referencedColumnName = "id"))
+    private List<Roles> roles;
+
     public UserPf() {
 
     }
@@ -105,4 +114,11 @@ public class UserPf extends User{
         this.transactions = transactions;
     }
 
+    public List<Roles> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<Roles> roles) {
+        this.roles = roles;
+    }
 }

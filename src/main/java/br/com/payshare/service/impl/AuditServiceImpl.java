@@ -33,4 +33,9 @@ public class AuditServiceImpl implements AuditService {
     public List<Audit> findAll() {
         return auditRepository.findAll();
     }
+
+    @Override
+    public Audit findByIdLobby(long idLobby) {
+        return auditRepository.findByIdLobby(idLobby);
+    }
 }

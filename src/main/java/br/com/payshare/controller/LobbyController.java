@@ -14,16 +14,21 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 @RestController
-public class LobbyController implements LobbyApiController {
+public class LobbyController extends Observable implements LobbyApiController {
 
     LobbyService lobbyService;
     UserPfService userPfService;
     AuditService auditService;
+
+    public LobbyController(){};
 
     @Autowired
     public LobbyController(LobbyService lobbyService, UserPfService userPfService, AuditService auditService) {
@@ -61,7 +66,10 @@ public class LobbyController implements LobbyApiController {
         lobby.setCreationDate(now);
         lobby.setExpirationDate(now.plusHours(48));
         lobby.setUserPfList(userPfList);
-        return new ResponseEntity<>(lobbyService.save(lobby), HttpStatus.OK);
+        lobbyService.save(lobby);
+        this.addObserver(new AuditController());
+        this.notificar(lobby);
+        return new ResponseEntity<>(lobby, HttpStatus.OK);
     }
 
     @Override
@@ -74,13 +82,17 @@ public class LobbyController implements LobbyApiController {
             return new ResponseEntity<>("You_are_already_associated_with_a_lobby" , HttpStatus.BAD_REQUEST);
         userPfList.add(userPf);
         for (UserPf userPf1 : userPfList){
-            userPf1.setUserAmountLobby(lobby.getAmount().divide(new BigDecimal(userPfList.size())));
+            userPf1.setUserAmountLobby(lobby.getAmount().divide(new BigDecimal(userPfList.size()),2, RoundingMode.HALF_UP));
             userPf1.setLobby(lobby);
             try{
                 lobbyService.save(lobby);
                 userPfService.save(userPf1);
             }catch (Exception e){
                 System.out.println("Erro ao salvar entidade: " + e.getMessage());
+            }finally {
+                System.out.println(lobby.toString());
+                this.addObserver(new AuditController());
+                this.notificar(lobby);
             }
         }
         return new ResponseEntity<>(lobby, HttpStatus.OK);
@@ -89,9 +101,14 @@ public class LobbyController implements LobbyApiController {
     @Override
     public ResponseEntity<?> update(Lobby lobby, long id) throws InstantiationException, IllegalAccessException {
         Lobby lobbyEntity = lobbyService.findById(id);
-        if (lobbyEntity == null)
+        if (lobbyEntity == null){
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(lobbyService.save(lobby), HttpStatus.OK);
+        }else{
+            this.addObserver(new AuditController());
+            this.notificar(lobbyEntity);
+            lobbyService.save(lobby);
+        }
+        return new ResponseEntity<>(lobby, HttpStatus.OK);
     }
 
     @Override
@@ -118,4 +135,18 @@ public class LobbyController implements LobbyApiController {
         return new ResponseEntity<>(lobby , HttpStatus.OK);
     }
 
+    @Override
+    public synchronized void addObserver(Observer o) {
+        super.addObserver(o);
+    }
+
+    @Override
+    public void notifyObservers(Object arg) {
+        super.notifyObservers(arg);
+    }
+
+    private void notificar(Lobby l) {
+        setChanged();
+        notifyObservers(l);
+    }
 }
