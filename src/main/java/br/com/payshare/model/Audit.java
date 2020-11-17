@@ -103,4 +103,16 @@ public class Audit implements Serializable {
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
+
+    @Override
+    public String toString() {
+        return "Audit{" +
+                "id=" + id +
+                ", idLobby=" + idLobby +
+                ", amountTransacted=" + amountTransacted +
+                ", activedMembers=" + activedMembers +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                '}';
+    }
 }
