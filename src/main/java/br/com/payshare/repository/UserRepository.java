@@ -13,4 +13,5 @@ public interface UserRepository extends JpaRepository<UserPf, Long> {
     UserPf findByUserId(long id);
     List<UserPf> findByLobby(Lobby lobby);
     LoginUserDto findByCpf(String cpf);
+    UserPf findByEmail(String email);
 }

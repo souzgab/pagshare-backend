@@ -9,6 +9,7 @@ import br.com.payshare.service.UserPfService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -26,6 +27,7 @@ public class UserPfController implements UserApiController {
     }
 
     @Override
+    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<List<UserPf>> findAll() {
         if (userPfService.findAll().isEmpty())
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
@@ -33,6 +35,7 @@ public class UserPfController implements UserApiController {
     }
 
     @Override
+    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<List<UserPf>> findUsersByLobby(long id) {
         Lobby lobbyUsers = lobbyService.findById(id);
         if (lobbyUsers == null)
@@ -41,6 +44,7 @@ public class UserPfController implements UserApiController {
     }
 
     @Override
+    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<UserPf> findById(long id) {
         UserPf user = userPfService.findByUserId(id);
         if (user == null)
@@ -49,16 +53,18 @@ public class UserPfController implements UserApiController {
     }
 
     @Override
+    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<?> save(UserPf userPf) throws InstantiationException, IllegalAccessException {
         if (userPf instanceof UserPf) {
             userPfService.save(userPf);
             return new ResponseEntity<>(null, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
     }
 
     @Override
+    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<?> update(UserPf userPf, long id) throws InstantiationException, IllegalAccessException {
         UserPf willBe = userPfService.findByUserId(id);
         if (willBe == null)
@@ -67,6 +73,7 @@ public class UserPfController implements UserApiController {
     }
 
     @Override
+    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<Void> delete(long id) {
         UserPf deleteBy = userPfService.findByUserId(id);
         if (deleteBy == null)
@@ -74,6 +81,5 @@ public class UserPfController implements UserApiController {
         userPfService.deleteById(id);
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
-
 
 }

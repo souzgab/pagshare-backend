@@ -13,4 +13,5 @@ public interface UserPfService {
     List<UserPf> findAll();
     List<UserPf> findByLobby(Lobby lobby);
     LoginUserDto findByCpf(String cpf);
+    UserPf findByEmail(String email);
 }
