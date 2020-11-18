@@ -33,7 +33,7 @@ public class UserPf extends User{
     private Lobby lobby;
 
     @OneToMany
-    @JoinColumn(name = "LOBBY_ID")
+    @JoinColumn(name = "USER_ID")
     private List<Transaction> transactions = new ArrayList<>();
 
     @ManyToMany()
