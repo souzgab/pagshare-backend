@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping(PayshareApplication.API_PREFIX + "/payshare/auth")
 public interface AuthApiController {
 
-    @PostMapping(value = "/login", produces = MediaType.ALL_VALUE)
+    @PostMapping(value = "/login")
     ResponseEntity<?> login(@RequestBody LoginUserDto user) throws Exception;
 
     @PostMapping(value = "/signup")

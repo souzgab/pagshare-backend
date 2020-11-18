@@ -2,10 +2,12 @@ package br.com.payshare.controller;
 
 import br.com.payshare.api.AuthApiController;
 import br.com.payshare.dto.LoginUserDto;
+import br.com.payshare.dto.UserDto;
 import br.com.payshare.model.Roles;
 import br.com.payshare.model.UserPf;
 import br.com.payshare.service.RoleService;
 import br.com.payshare.service.UserPfService;
+import br.com.payshare.utils.security.EntityToDto;
 import br.com.payshare.utils.security.jwt.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,6 +30,7 @@ public class AuthController implements AuthApiController {
     private UserPfService userPfService;
     private RoleService roleService;
 
+
     @Autowired
     public AuthController(JwtUtil jwtUtil, AuthenticationManager authenticationManager,
                           UserPfService userPfService, RoleService roleService) {
@@ -39,14 +42,18 @@ public class AuthController implements AuthApiController {
 
     @Override
     public ResponseEntity<?> login(LoginUserDto user) throws Exception {
+        UserPf userPf;
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword())
             );
+            userPf = userPfService.findByEmail(user.getEmail());
+
         } catch (Exception ex) {
             throw new Exception("inavalid username/password");
         }
-        return new ResponseEntity<>(jwtUtil.generateToken(user.getEmail()), HttpStatus.OK) ;
+
+        return new ResponseEntity<>(new EntityToDto().entityToUserDto(userPf, jwtUtil.generateToken(user.getEmail())), HttpStatus.OK) ;
     }
 
     @Override
