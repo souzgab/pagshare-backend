@@ -142,6 +142,30 @@ public class Transaction implements Serializable {
         this.externalReference = externalReference;
     }
 
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getExpirationDate() {
+        return expirationDate;
+    }
+
+    public void setExpirationDate(LocalDateTime expirationDate) {
+        this.expirationDate = expirationDate;
+    }
+
+    public String getInitPoint() {
+        return initPoint;
+    }
+
+    public void setInitPoint(String initPoint) {
+        this.initPoint = initPoint;
+    }
+
     public UserPf getUserPf() {
         return userPf;
     }
@@ -157,6 +181,4 @@ public class Transaction implements Serializable {
     public void setLobby(Lobby lobby) {
         this.lobby = lobby;
     }
-
-
 }
