@@ -39,8 +39,7 @@ public class Lobby implements Taxes , Serializable {
     @Column(name = "LOBBY_AMOUNT" , nullable = false)
     private BigDecimal amount;
 
-    @NotNull
-    @Column(name = "LOBBY_AMOUNT_TOTAL" , nullable = false , columnDefinition = " float default 0")
+    @Column(name = "LOBBY_AMOUNT_TOTAL" , nullable = false , columnDefinition = "numeric default 0")
     private BigDecimal amountTotal;
 
     @Column(name = "LOBBY_CREATION_DATE")
