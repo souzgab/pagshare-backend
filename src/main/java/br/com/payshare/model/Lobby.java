@@ -39,6 +39,10 @@ public class Lobby implements Taxes , Serializable {
     @Column(name = "LOBBY_AMOUNT" , nullable = false)
     private BigDecimal amount;
 
+    @NotNull
+    @Column(name = "LOBBY_AMOUNT_TOTAL" , nullable = false , columnDefinition = "0")
+    private BigDecimal amountTotal;
+
     @Column(name = "LOBBY_CREATION_DATE")
     @Convert(converter = Jsr310JpaConverters.LocalDateTimeConverter.class)
     private LocalDateTime creationDate;
@@ -139,6 +143,14 @@ public class Lobby implements Taxes , Serializable {
 
     public void setTransactions(List<Transaction> transactions) {
         this.transactions = transactions;
+    }
+
+    public BigDecimal getAmountTotal() {
+        return amountTotal;
+    }
+
+    public void setAmountTotal(BigDecimal amountTotal) {
+        this.amountTotal = amountTotal;
     }
 
     @Override
