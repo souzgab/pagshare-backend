@@ -179,7 +179,7 @@ public class AuditController implements AuditApiController, Observer {
                 if(lobbyController.auditService.findByIdLobby(lobby.getId()) != null){
                     Audit audit = lobbyController.auditService.findByIdLobby(lobby.getId());
                     audit.setActivedMembers(lobby.getUserPfList().size());
-                    audit.setAmountTransacted(lobby.getAmount());
+                    audit.setAmountTransacted(lobby.getAmountTotal());
                     audit.setUpdatedAt(now);
                     lobbyController.auditService.save(audit);
                 }else{
