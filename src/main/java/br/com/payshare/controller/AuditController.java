@@ -3,20 +3,22 @@ package br.com.payshare.controller;
 import br.com.payshare.api.AuditApiController;
 import br.com.payshare.model.Audit;
 import br.com.payshare.model.Lobby;
+import br.com.payshare.model.UserPf;
 import br.com.payshare.service.AuditService;
 import br.com.payshare.service.LobbyService;
 import br.com.payshare.service.UserPfService;
+import com.fasterxml.jackson.databind.util.JSONPObject;
+import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
-
+import org.json.JSONObject;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -80,8 +82,8 @@ public class AuditController implements AuditApiController, Observer {
                 df.setMinimumFractionDigits(0);
                 df.setGroupingUsed(false);
                 for (Audit a : auditData){
-                    String valor = df.format(a.getAmountTransacted()).replace(",", ".");
-                    saida.format("%s;%d;%s;%s;%s\n", a.getId(),a.getActivedMembers(), valor, a.getCreatedAt().toString(), a.getUpdatedAt());
+//                    String valor = df.format(a.getAmountTransacted()).replace(",", ".");
+//                    saida.format("%s;%d;%s;%s;%s\n", a.getId(),a.getActivedMembers(), valor, a.getCreatedAt().toString(), a.getUpdatedAt());
                 }
             }catch (Exception e){
                 System.out.println("Erro " + e.getMessage());
@@ -138,9 +140,9 @@ public class AuditController implements AuditApiController, Observer {
             corpo += String.format("%-3s", "99");
             corpo += String.format("%-5d", a.getId());
             corpo += String.format("%-25s", a.getCreatedAt());
-            corpo += String.format("%-10d", a.getActivedMembers());
-            corpo += String.format("%-10s", a.getAmountTransacted().toString());
-            corpo += String.format("%-20s", a.getUpdatedAt());
+//            corpo += String.format("%-10d", a.getActivedMembers());
+//            corpo += String.format("%-10s", a.getAmountTransacted().toString());
+//            corpo += String.format("%-20s", a.getUpdatedAt());
             contRegDados++;
             gravaRegistro(nomeArquivo,corpo);
         }
@@ -159,11 +161,9 @@ public class AuditController implements AuditApiController, Observer {
         } catch (IOException e) {
             System.err.printf("Erro na abertura do arquivo: %s.\n", e.getMessage());
         }
-
         try {
             saida.append(registro + "\n");
             saida.close();
-
         } catch (IOException e) {
             System.err.printf("Erro ao gravar arquivo: %s.\n", e.getMessage());
         }
@@ -171,17 +171,21 @@ public class AuditController implements AuditApiController, Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        LocalDateTime now = LocalDateTime.now();
         try {
             if (arg instanceof Lobby){
                 Lobby lobby = (Lobby) arg;
                 LobbyController lobbyController = (LobbyController) o;
                 if(lobbyController.auditService.findByIdLobby(lobby.getId()) != null){
-                    Audit audit = lobbyController.auditService.findByIdLobby(lobby.getId());
-                    audit.setActivedMembers(lobby.getUserPfList().size());
-                    audit.setAmountTransacted(lobby.getAmountTotal());
-                    audit.setUpdatedAt(now);
-                    lobbyController.auditService.save(audit);
+                    for (UserPf pf : lobby.getUserPfList()){
+//                        Audit audit = lobbyController.auditService.findByIdLobby(lobby.getId());
+                        Audit audit = new Audit();
+                        audit.setIdUserPfHistory(generateJsonIds(lobby.getUserPfList()));
+                        audit.setIdLobby(lobby.getId());
+                        audit.setIdUser(pf.getUserId());
+                        audit.setLobbyData(generateJsonLobbyData(lobby));
+                        audit.setDescriptionHistory(lobby.getLobbyDescription());
+                        lobbyController.auditService.save(audit);
+                    }
                 }else{
                     Audit generatedAudit = generateAudit(lobby);
                     lobbyController.auditService.save(generatedAudit);
@@ -192,14 +196,54 @@ public class AuditController implements AuditApiController, Observer {
         }
     }
 
-    private Audit generateAudit(Lobby l) {
+    private Audit generateAudit(Lobby l) throws Exception{
         Audit audit = new Audit();
-        LocalDateTime now = LocalDateTime.now();
-        audit.setAmountTransacted(l.getAmount());
-        audit.setIdLobby(l.getId());
-        audit.setActivedMembers(l.getUserPfList().size());
-        audit.setCreatedAt(l.getCreationDate());
-        audit.setUpdatedAt(now);
+        try{
+            audit.setIdLobby(l.getId());
+            audit.setIdUserPfHistory(generateJsonIds(l.getUserPfList()));
+            for (UserPf pf : l.getUserPfList()){
+                audit.setIdUser(pf.getUserId());
+            }
+            audit.setLobbyData(generateJsonLobbyData(l));
+            audit.setDescriptionHistory(l.getLobbyDescription());
+        }catch (Exception e){
+            System.out.println("Error at AuditGenerated: " + e.getMessage());
+        }
         return audit;
+    }
+
+    private String generateJsonIds(List<UserPf> list) throws Exception{
+        JSONObject json = new JSONObject();
+        JSONArray ids = new JSONArray();
+        List<Integer> idsUser = new ArrayList<>();
+        try {
+            for (UserPf pf : list){
+                idsUser.add(Integer.parseInt(String.valueOf(pf.getUserId())));
+            }
+            for (Integer i : idsUser){
+                ids.put(i);
+            }
+            json.put("idsFromLobby", ids);
+        }catch (Exception e){
+            System.out.println("Error at JsonGenerated: " + e.getMessage());
+        }
+        System.out.println(json.toString());
+        return json.toString();
+    }
+
+    private String generateJsonLobbyData(Lobby lobby) throws Exception{
+        JSONObject json = new JSONObject();
+        try {
+            json.put("amountTotal", lobby.getAmountTotal());
+            json.put("amountCreation",lobby.getAmount());
+            json.put("createdAt",lobby.getCreationDate());
+            json.put("expirationDate",lobby.getExpirationDate());
+            json.put("lobbyDesc",lobby.getLobbyDescription());
+            json.put("lobbyId",lobby.getId());
+        }catch (Exception e){
+            System.out.println("Error at JsonGenerated: " + e.getMessage());
+        }
+        System.out.println(json.toString());
+        return json.toString();
     }
 }

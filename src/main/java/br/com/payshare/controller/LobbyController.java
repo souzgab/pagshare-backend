@@ -68,7 +68,7 @@ public class LobbyController extends Observable implements LobbyApiController {
         lobby.setUserPfList(userPfList);
         lobbyService.save(lobby);
         this.addObserver(new AuditController());
-        this.notificar(lobby);
+        this.notificar(lobbyService.findById(lobby.getId()));
         return new ResponseEntity<>(lobby, HttpStatus.OK);
     }
 
@@ -82,18 +82,20 @@ public class LobbyController extends Observable implements LobbyApiController {
             return new ResponseEntity<>("You_are_already_associated_with_a_lobby" , HttpStatus.BAD_REQUEST);
         userPfList.add(userPf);
         for (UserPf userPf1 : userPfList){
-            userPf1.setUserAmountLobby(lobby.getAmount().divide(new BigDecimal(userPfList.size())));
+            userPf1.setUserAmountLobby(lobby.getAmount().divide(new BigDecimal(userPfList.size()), 3, RoundingMode.HALF_UP));
             userPf1.setLobby(lobby);
             try{
                 lobbyService.save(lobby);
                 userPfService.save(userPf1);
             }catch (Exception e){
                 System.out.println("Erro ao salvar entidade: " + e.getMessage());
-            }finally {
-                System.out.println(lobby.toString());
-                this.addObserver(new AuditController());
-                this.notificar(lobby);
             }
+        }
+        try{
+            this.addObserver(new AuditController());
+            this.notificar(lobbyService.findById(lobby.getId()));
+        }catch (Exception e){
+            System.out.println("Erro ao comunicar Audit");
         }
         return new ResponseEntity<>(lobby, HttpStatus.OK);
     }
@@ -112,12 +114,15 @@ public class LobbyController extends Observable implements LobbyApiController {
                 userPfService.save(userPf1);
             }catch (Exception e){
                 System.out.println("Erro ao salvar entidade: " + e.getMessage());
-            }finally {
-                System.out.println(lobby.toString());
-                this.addObserver(new AuditController());
-                this.notificar(lobby);
             }
         }
+        try{
+            this.addObserver(new AuditController());
+            this.notificar(lobbyService.findById(lobby.getId()));
+        }catch (Exception e){
+            System.out.println("Erro ao comunicar Audit");
+        }
+
         return new ResponseEntity<>(lobby, HttpStatus.OK);
     }
 

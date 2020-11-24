@@ -1,10 +1,16 @@
 package br.com.payshare.model;
 
+import com.fasterxml.jackson.databind.util.JSONPObject;
+import org.hibernate.annotations.CreationTimestamp;
+import org.json.JSONObject;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -14,26 +20,33 @@ public class Audit implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "AUDIT_ID" , nullable = false)
+    @Column(name = "AUDIT_ID", nullable = false)
     private long id;
 
-    @Column(name = "LOBBY_ID" , nullable = false)
+    @NotNull
+    @Column(name = "LOBBY_ID", nullable = false)
     private long idLobby;
 
     @NotNull
-    @Column(name = "AMOUNT_TRANSACTED", length = 100, nullable = false)
-    private BigDecimal amountTransacted;
+    @Column(name = "USER_ID", nullable = false)
+    private long idUser;
 
     @NotNull
-    @Column(name = "ACTIVED_MEMBERS", nullable = false)
-    private Integer activedMembers;
+    @Column(name = "USERPF_IDS_LOBBY_HISTORY", nullable = false)
+    private String idUserPfHistory;
+
+    @NotNull
+    @Column(name = "LOBBY_INFO", nullable = false)
+    private String lobbyData;
+
+    @NotNull
+    @Column(name = "DESC_HST", nullable = false)
+    private String descriptionHistory;
 
     @NotNull
     @Column(name = "CREATED_AT", nullable = false)
+    @CreationTimestamp
     private LocalDateTime createdAt;
-
-    @Column(updatable = true, name = "UPDATED_AT")
-    private LocalDateTime updatedAt;
 
     public Audit() {
     }
@@ -45,15 +58,16 @@ public class Audit implements Serializable {
         Audit audit = (Audit) o;
         return id == audit.id &&
                 idLobby == audit.idLobby &&
-                Objects.equals(amountTransacted, audit.amountTransacted) &&
-                Objects.equals(activedMembers, audit.activedMembers) &&
-                Objects.equals(createdAt, audit.createdAt) &&
-                Objects.equals(updatedAt, audit.updatedAt);
+                idUser == audit.idUser &&
+                Objects.equals(idUserPfHistory, audit.idUserPfHistory) &&
+                Objects.equals(lobbyData, audit.lobbyData) &&
+                Objects.equals(descriptionHistory, audit.descriptionHistory) &&
+                Objects.equals(createdAt, audit.createdAt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, idLobby, amountTransacted, activedMembers, createdAt, updatedAt);
+        return Objects.hash(id, idLobby, idUserPfHistory, createdAt);
     }
 
     public long getId() {
@@ -72,20 +86,28 @@ public class Audit implements Serializable {
         this.idLobby = idLobby;
     }
 
-    public BigDecimal getAmountTransacted() {
-        return amountTransacted;
+    public long getIdUser() {
+        return idUser;
     }
 
-    public void setAmountTransacted(BigDecimal amountTransacted) {
-        this.amountTransacted = amountTransacted;
+    public void setIdUser(long idUser) {
+        this.idUser = idUser;
     }
 
-    public Integer getActivedMembers() {
-        return activedMembers;
+    public String getDescriptionHistory() {
+        return descriptionHistory;
     }
 
-    public void setActivedMembers(Integer activedMembers) {
-        this.activedMembers = activedMembers;
+    public void setDescriptionHistory(String descriptionHistory) {
+        this.descriptionHistory = descriptionHistory;
+    }
+
+    public String getIdUserPfHistory() {
+        return idUserPfHistory;
+    }
+
+    public void setIdUserPfHistory(String idUserPfHistory) {
+        this.idUserPfHistory = idUserPfHistory;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -96,12 +118,12 @@ public class Audit implements Serializable {
         this.createdAt = createdAt;
     }
 
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
+    public String getLobbyData() {
+        return lobbyData;
     }
 
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
+    public void setLobbyData(String lobbyData) {
+        this.lobbyData = lobbyData;
     }
 
     @Override
@@ -109,10 +131,11 @@ public class Audit implements Serializable {
         return "Audit{" +
                 "id=" + id +
                 ", idLobby=" + idLobby +
-                ", amountTransacted=" + amountTransacted +
-                ", activedMembers=" + activedMembers +
+                ", idUser=" + idUser +
+                ", idUserPfHistory='" + idUserPfHistory + '\'' +
+                ", lobbyData='" + lobbyData + '\'' +
+                ", descriptionHistory='" + descriptionHistory + '\'' +
                 ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
                 '}';
     }
 }
