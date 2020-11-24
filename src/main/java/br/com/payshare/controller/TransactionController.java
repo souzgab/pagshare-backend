@@ -30,7 +30,8 @@ public class TransactionController implements TransactionApiController {
     }
 
     @Override
-    public ResponseEntity<?> createTransactionByUserWallet(String token, BigDecimal amount, long idUser) throws InstantiationException, IllegalAccessException {
-        return null;
+    public ResponseEntity<?> createTransactionByUserWallet(String token, long idUser, BigDecimal amount) throws InstantiationException, IllegalAccessException {
+        TransactionRest transactionRest = new TransactionRest();
+        return new ResponseEntity<>(transactionRest.createTransactionWallet(token, idUser, amount),HttpStatus.OK);
     }
 }
