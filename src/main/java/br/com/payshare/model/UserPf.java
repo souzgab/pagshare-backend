@@ -21,6 +21,9 @@ public class UserPf extends User{
     @Column(name = "USER_RG" , length = 9 , nullable = true)
     private String rg;
 
+    @Column(name = "USER_AMOUNT", nullable = true)
+    private BigDecimal userAmount;
+
     @Column(name = "USER_LOBBY_HOST" , length = 1 , nullable = true , columnDefinition = "boolean default false")
     private boolean userLobbyHost;
 
@@ -35,6 +38,10 @@ public class UserPf extends User{
     @OneToMany
     @JoinColumn(name = "USER_ID")
     private List<Transaction> transactions = new ArrayList<>();
+
+    @OneToMany
+    @JoinColumn(name = "USER_ID")
+    private List<TransactionWallet> transactionWallets = new ArrayList<>();
 
     @ManyToMany()
     @JoinTable(
@@ -57,7 +64,12 @@ public class UserPf extends User{
         return userLobbyHost == userPf.userLobbyHost &&
                 Objects.equals(cpf, userPf.cpf) &&
                 Objects.equals(rg, userPf.rg) &&
-                Objects.equals(lobby, userPf.lobby);
+                Objects.equals(userAmount, userPf.userAmount) &&
+                Objects.equals(userAmountLobby, userPf.userAmountLobby) &&
+                Objects.equals(lobby, userPf.lobby) &&
+                Objects.equals(transactions, userPf.transactions) &&
+                Objects.equals(transactionWallets, userPf.transactionWallets) &&
+                Objects.equals(roles, userPf.roles);
     }
 
     @Override
@@ -119,5 +131,21 @@ public class UserPf extends User{
 
     public void setRoles(List<Roles> roles) {
         this.roles = roles;
+    }
+
+    public BigDecimal getUserAmount() {
+        return userAmount;
+    }
+
+    public void setUserAmount(BigDecimal userAmount) {
+        this.userAmount = userAmount;
+    }
+
+    public List<TransactionWallet> getTransactionWallets() {
+        return transactionWallets;
+    }
+
+    public void setTransactionWallets(List<TransactionWallet> transactionWallets) {
+        this.transactionWallets = transactionWallets;
     }
 }
