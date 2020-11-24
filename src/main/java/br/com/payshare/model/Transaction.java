@@ -35,20 +35,20 @@ public class Transaction implements Serializable {
     @Column(name = "TRANSACTION_PAYMENT_METHOD")
     private String paymentMethod;
 
-    @NotNull
-    @Column(name = "TRANSACTION_CURRENCYID" ,nullable = false , length = 3)
+
+    @Column(name = "TRANSACTION_CURRENCYID" , length = 3)
     private String currencyId;
 
     @NotNull
     @Column(name = "TRANSACTION_EXTERNAL_REFERENCES" , nullable = false)
     private String externalReference;
 
-    @NotNull
-    @Column(name = "CREATED_AT" , nullable = false)
+
+    @Column(name = "CREATED_AT")
     private LocalDateTime createdAt;
 
-    @NotNull
-    @Column(name = "EXPIRATION_DATE", nullable = false)
+
+    @Column(name = "EXPIRATION_DATE")
     private LocalDateTime expirationDate;
 
     @NotNull
