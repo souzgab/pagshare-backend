@@ -34,7 +34,7 @@ public class TransactionWallet implements Serializable {
     private String paymentMethod;
 
 
-    @Column(name = "TRANSACTION_CURRENCYID" ,nullable = false , length = 3)
+    @Column(name = "TRANSACTION_CURRENCYID" , length = 3)
     private String currencyId;
 
     @NotNull
@@ -42,10 +42,10 @@ public class TransactionWallet implements Serializable {
     private String externalReference;
 
 
-    @Column(name = "CREATED_AT" , nullable = false)
+    @Column(name = "CREATED_AT")
     private LocalDateTime createdAt;
 
-    @Column(name = "EXPIRATION_DATE", nullable = false)
+    @Column(name = "EXPIRATION_DATE")
     private LocalDateTime expirationDate;
 
     @NotNull

@@ -18,8 +18,7 @@ public abstract class User implements Serializable {
     @Column(name = "USER_NAME" , nullable = false )
     private String name;
 
-    @NotNull
-    @Column(name = "USER_AGE" , nullable = false , length = 3)
+    @Column(name = "USER_AGE" , length = 3)
     private Integer age;
 
     @Column(name = "USER_ADDRESS" , length = 255)
