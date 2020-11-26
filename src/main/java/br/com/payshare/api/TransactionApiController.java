@@ -25,6 +25,10 @@ public interface TransactionApiController {
             , @PathVariable BigDecimal amount, @PathVariable long idUser) throws
             InstantiationException, IllegalAccessException;
 
+    @PostMapping(path = "/wallet-lobby/{idUser}/{amount}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> createTransactionByLobbyWallet(@PathVariable long idUser, @PathVariable BigDecimal amount)throws
+            InstantiationException, IllegalAccessException;;
+
     @PostMapping(path = "/wallet/{idUser}/{amount}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createTransactionByUserWallet(@RequestHeader(name = "Authorization") String token
             , @PathVariable long idUser, @PathVariable BigDecimal amount) throws
