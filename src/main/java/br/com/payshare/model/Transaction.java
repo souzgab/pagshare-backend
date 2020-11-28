@@ -54,6 +54,10 @@ public class Transaction implements Serializable {
     @NotNull
     @Column(name = "INIT_POINT", nullable = false)
     private String initPoint;
+    
+    @NotNull
+    @Column(name = "cupomUser", nullable = false , length = 100)
+    private String cupomUser;
 
     @ManyToOne
     @JoinColumn(name = "USER_ID")
