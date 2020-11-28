@@ -170,6 +170,14 @@ public class Transaction implements Serializable {
         this.initPoint = initPoint;
     }
 
+    public String getCupomUser() {
+        return cupomUser;
+    }
+
+    public void setCupomUser(String cupomUser) {
+        this.cupomUser = cupomUser;
+    }
+
     public UserPf getUserPf() {
         return userPf;
     }
@@ -185,4 +193,5 @@ public class Transaction implements Serializable {
     public void setLobby(Lobby lobby) {
         this.lobby = lobby;
     }
+
 }
