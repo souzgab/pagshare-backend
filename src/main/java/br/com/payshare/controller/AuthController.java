@@ -18,6 +18,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,6 +70,7 @@ public class AuthController implements AuthApiController {
         UserPf newUser = new UserPf();
         newUser.setName(user.getName());
         newUser.setAge(user.getAge());
+        newUser.setUserAmount(new BigDecimal(50));
         newUser.setEmail(user.getEmail());
         newUser.setCpf(user.getCpf());
         newUser.setAddress(user.getAddress());
