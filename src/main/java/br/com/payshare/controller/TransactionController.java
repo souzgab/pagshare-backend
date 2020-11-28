@@ -51,9 +51,8 @@ public class TransactionController implements TransactionApiController {
     public ResponseEntity<?> createTransactionByLobbyWallet(long idUser, BigDecimal amount) throws InstantiationException, IllegalAccessException {
         UserPf userPf = userPfService.findByUserId(idUser);
         Lobby lobby = lobbyService.findByUserPfList(userPf);
-        BigDecimal userAmount = BigDecimal.ZERO;
         LocalDateTime now = LocalDateTime.now();
-        if (userPf.getUserAmount().equals(userAmount)) {
+        if (userPf.getUserAmount().compareTo(BigDecimal.ZERO) == 0) {
             return new ResponseEntity<>("Insufficient funds", HttpStatus.UNAUTHORIZED);
         }
         Transaction transaction = new Transaction();
