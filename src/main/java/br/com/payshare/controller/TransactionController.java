@@ -75,6 +75,7 @@ public class TransactionController implements TransactionApiController {
             userPf.setUserAmount(userPf.getUserAmount().subtract(transaction.getAmount()));
             userPf.setUserAmountLobby(transaction.getAmount().subtract(userPf.getUserAmountLobby()));
             lobby.setAmountTotal(transaction.getAmount().add(lobby.getAmountTotal()));
+            lobby.setLobbyOpen(false); // assim que e feito a primeira transação a lobby sera fechada para novos participantes impossibilitando exclusão
         } catch (Exception e) {
             System.out.println(e);
         } finally {

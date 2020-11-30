@@ -135,14 +135,14 @@ public class LobbyController extends Observable implements LobbyApiController {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
         if (lobbyEntity.isLobbyOpen()){
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+            for (UserPf userPf: userPfList){
+                userPf.setUserAmountLobby(null);
+                userPf.setUserLobbyHost(false);
+            }
+            lobbyService.deleteById(id);
+            return new ResponseEntity<Void>(HttpStatus.OK);
         }
-        for (UserPf userPf: userPfList){
-            userPf.setUserAmountLobby(null);
-            userPf.setUserLobbyHost(false);
-        }
-        lobbyService.deleteById(id);
-        return new ResponseEntity<Void>(HttpStatus.OK);
+        return new ResponseEntity<>(null , HttpStatus.BAD_REQUEST);
     }
 
     @Override
