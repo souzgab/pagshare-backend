@@ -52,7 +52,7 @@ public class TransactionController implements TransactionApiController {
         UserPf userPf = userPfService.findByUserId(idUser);
         Lobby lobby = lobbyService.findByUserPfList(userPf);
         LocalDateTime now = LocalDateTime.now();
-        if (userPf.getUserAmount().compareTo(BigDecimal.ZERO) == 0 || lobby.getAmount().compareTo(userPf.getUserAmount()) == 1) {
+        if (userPf.getUserAmount().compareTo(BigDecimal.ZERO) == 0 || userPf.getUserAmountLobby().compareTo(userPf.getUserAmount()) == 1) {
             return new ResponseEntity<>("Insufficient funds", HttpStatus.UNAUTHORIZED);
         }
         Transaction transaction = new Transaction();
