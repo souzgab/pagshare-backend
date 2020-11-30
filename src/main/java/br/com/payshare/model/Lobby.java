@@ -50,6 +50,10 @@ public class Lobby implements Taxes , Serializable {
     @Convert(converter = Jsr310JpaConverters.LocalDateTimeConverter.class)
     private LocalDateTime expirationDate;
 
+    @NotNull
+    @Column(name = "LOBBY_OPEN" , length = 1 , nullable = true , columnDefinition = "boolean default true")
+    private boolean lobbyOpen;
+
     @OneToMany
     @JoinColumn(name = "LOBBY_ID")
     private List<UserPf> userPfList = new ArrayList<>();
@@ -150,6 +154,14 @@ public class Lobby implements Taxes , Serializable {
 
     public void setAmountTotal(BigDecimal amountTotal) {
         this.amountTotal = amountTotal;
+    }
+
+    public boolean isLobbyOpen() {
+        return lobbyOpen;
+    }
+
+    public void setLobbyOpen(boolean lobbyOpen) {
+        this.lobbyOpen = lobbyOpen;
     }
 
     @Override

@@ -55,6 +55,9 @@ public class TransactionController implements TransactionApiController {
         if (userPf.getUserAmount().compareTo(BigDecimal.ZERO) == 0 || userPf.getUserAmountLobby().compareTo(userPf.getUserAmount()) == 1) {
             return new ResponseEntity<>("Insufficient funds", HttpStatus.UNAUTHORIZED);
         }
+        if (userPf.getUserAmountLobby().compareTo(BigDecimal.ZERO) == 0){
+            return new ResponseEntity<>("Você já pagou a sua parte", HttpStatus.OK);
+        }
         Transaction transaction = new Transaction();
         try {
             transaction.setAmount(amount);

@@ -80,22 +80,28 @@ public class LobbyController extends Observable implements LobbyApiController {
 
         if (userPf.getLobby() != null)
             return new ResponseEntity<>("You_are_already_associated_with_a_lobby" , HttpStatus.BAD_REQUEST);
-        userPfList.add(userPf);
-        for (UserPf userPf1 : userPfList){
-            userPf1.setUserAmountLobby(lobby.getAmount().divide(new BigDecimal(userPfList.size())));
-            userPf1.setLobby(lobby);
-            try{
-                lobbyService.save(lobby);
-                userPfService.save(userPf1);
-            }catch (Exception e){
-                System.out.println("Erro ao salvar entidade: " + e.getMessage());
-            }finally {
-                System.out.println(lobby.toString());
-                this.addObserver(new AuditController());
-                this.notificar(lobby);
+
+        if (lobby.isLobbyOpen()){
+            userPfList.add(userPf);
+            for (UserPf userPf1 : userPfList){
+                userPf1.setUserAmountLobby(lobby.getAmount().divide(new BigDecimal(userPfList.size())));
+                userPf1.setLobby(lobby);
+                try{
+                    lobbyService.save(lobby);
+                    userPfService.save(userPf1);
+                }catch (Exception e){
+                    System.out.println("Erro ao salvar entidade: " + e.getMessage());
+                }finally {
+                    System.out.println(lobby.toString());
+                    this.addObserver(new AuditController());
+                    this.notificar(lobby);
+                }
             }
+            return new ResponseEntity<>(lobby, HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>("\n" +
+                    "lobby payments have already been initiated so it is not possible to add someone in the same" , HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(lobby, HttpStatus.OK);
     }
 
     @Override
@@ -127,6 +133,9 @@ public class LobbyController extends Observable implements LobbyApiController {
         List<UserPf> userPfList = userPfService.findByLobby(lobbyEntity);
         if (lobbyEntity == null) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+        if (lobbyEntity.isLobbyOpen()){
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
         for (UserPf userPf: userPfList){
             userPf.setUserAmountLobby(null);
