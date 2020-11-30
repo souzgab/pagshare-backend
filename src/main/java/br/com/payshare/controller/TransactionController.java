@@ -66,6 +66,7 @@ public class TransactionController implements TransactionApiController {
             transaction.setPaymentMethod("wallet");
             transaction.setInitPoint("wallet");
             transaction.setStatus("approved");
+            transaction.setCupomUser(userPf.getName());
             transaction.setLobby(lobby);
             transaction.setUserPf(userPf);
             userPf.setUserAmount(userPf.getUserAmount().subtract(transaction.getAmount()));
