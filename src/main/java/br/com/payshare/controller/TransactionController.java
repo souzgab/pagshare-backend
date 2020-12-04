@@ -32,13 +32,17 @@ public class TransactionController implements TransactionApiController {
     }
 
     @Override
-    public ResponseEntity<List<Transaction>> findAll() throws InstantiationException, IllegalAccessException {
-        return null;
+    public ResponseEntity<?> findAll() throws InstantiationException, IllegalAccessException {
+        return new ResponseEntity<>(transactionService.findAll(), HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity<Transaction> findById(long idTransaction) throws InstantiationException, IllegalAccessException {
-        return null;
+    public ResponseEntity<?> findById(long idTransaction) throws InstantiationException, IllegalAccessException {
+        Transaction transaction = transactionService.findByTransactionId(idTransaction);
+        if (transaction == null ){
+            return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(transaction,HttpStatus.OK) ;
     }
 
     @Override

@@ -13,11 +13,11 @@ import java.util.List;
 public interface TransactionApiController {
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Transaction>> findAll() throws
+    public ResponseEntity<?> findAll() throws
             InstantiationException, IllegalAccessException;
 
     @GetMapping(path = "/{idTransaction}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Transaction> findById(@PathVariable long idTransaction) throws
+    public ResponseEntity<?> findById(@PathVariable long idTransaction) throws
             InstantiationException, IllegalAccessException;
 
     @PostMapping(path = "/{idUser}/{amount}", produces = MediaType.APPLICATION_JSON_VALUE)

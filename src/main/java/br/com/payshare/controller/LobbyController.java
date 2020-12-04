@@ -66,6 +66,7 @@ public class LobbyController extends Observable implements LobbyApiController {
         lobby.setCreationDate(now);
         lobby.setExpirationDate(now.plusHours(48));
         lobby.setUserPfList(userPfList);
+        lobby.setLobbyOpen(true);
         lobbyService.save(lobby);
         this.addObserver(new AuditController());
         this.notificar(lobby);
