@@ -134,7 +134,7 @@ public class LobbyController extends Observable implements LobbyApiController {
     }
 
     @Override
-    @CrossOrigin(origins = "*")
+    @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Void> delete(long id) {
         Lobby lobbyEntity = lobbyService.findById(id);
         List<UserPf> userPfList = userPfService.findByLobby(lobbyEntity);
