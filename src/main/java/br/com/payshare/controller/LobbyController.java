@@ -11,6 +11,7 @@ import br.com.payshare.service.UserPfService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
@@ -22,13 +23,17 @@ import java.util.Observable;
 import java.util.Observer;
 
 @RestController
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class LobbyController extends Observable implements LobbyApiController {
 
     LobbyService lobbyService;
     UserPfService userPfService;
     AuditService auditService;
 
-    public LobbyController(){};
+    public LobbyController() {
+    }
+
+    ;
 
     @Autowired
     public LobbyController(LobbyService lobbyService, UserPfService userPfService, AuditService auditService) {
@@ -80,28 +85,28 @@ public class LobbyController extends Observable implements LobbyApiController {
         List<UserPf> userPfList = userPfService.findByLobby(lobby);
 
         if (userPf.getLobby() != null)
-            return new ResponseEntity<>("You_are_already_associated_with_a_lobby" , HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("You_are_already_associated_with_a_lobby", HttpStatus.BAD_REQUEST);
 
-        if (lobby.isLobbyOpen()){
+        if (lobby.isLobbyOpen()) {
             userPfList.add(userPf);
-            for (UserPf userPf1 : userPfList){
-                userPf1.setUserAmountLobby(lobby.getAmount().divide(new BigDecimal(userPfList.size()), 2 , RoundingMode.HALF_UP));
+            for (UserPf userPf1 : userPfList) {
+                userPf1.setUserAmountLobby(lobby.getAmount().divide(new BigDecimal(userPfList.size()), 2, RoundingMode.HALF_UP));
                 userPf1.setLobby(lobby);
-                try{
+                try {
                     lobbyService.save(lobby);
                     userPfService.save(userPf1);
-                }catch (Exception e){
+                } catch (Exception e) {
                     System.out.println("Erro ao salvar entidade: " + e.getMessage());
-                }finally {
+                } finally {
                     System.out.println(lobby.toString());
                     this.addObserver(new AuditController());
                     this.notificar(lobby);
                 }
             }
             return new ResponseEntity<>(lobby, HttpStatus.OK);
-        }else {
+        } else {
             return new ResponseEntity<>("\n" +
-                    "lobby payments have already been initiated so it is not possible to add someone in the same" , HttpStatus.BAD_REQUEST);
+                    "lobby payments have already been initiated so it is not possible to add someone in the same", HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -110,16 +115,16 @@ public class LobbyController extends Observable implements LobbyApiController {
         Lobby lobbyEntity = lobbyService.findById(id);
         List<UserPf> userPfList = userPfService.findByLobby(lobby);
         if (lobbyEntity == null)
-            return new ResponseEntity<>("You_are_already_associated_with_a_lobby" , HttpStatus.BAD_REQUEST);
-        for (UserPf userPf1 : userPfList){
+            return new ResponseEntity<>("You_are_already_associated_with_a_lobby", HttpStatus.BAD_REQUEST);
+        for (UserPf userPf1 : userPfList) {
             userPf1.setUserAmountLobby(lobby.getAmount().divide(new BigDecimal(userPfList.size())));
             lobby.setUserPfList(userPfList);
-            try{
+            try {
                 lobbyService.save(lobby);
                 userPfService.save(userPf1);
-            }catch (Exception e){
+            } catch (Exception e) {
                 System.out.println("Erro ao salvar entidade: " + e.getMessage());
-            }finally {
+            } finally {
                 System.out.println(lobby.toString());
                 this.addObserver(new AuditController());
                 this.notificar(lobby);
@@ -135,23 +140,23 @@ public class LobbyController extends Observable implements LobbyApiController {
         if (lobbyEntity == null) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
-        if (lobbyEntity.getAmountTotal().compareTo(lobbyEntity.getAmount()) == 0){
-            for (UserPf userPf: userPfList){
+        if (lobbyEntity.getAmountTotal().compareTo(lobbyEntity.getAmount()) == 0) {
+            for (UserPf userPf : userPfList) {
                 userPf.setUserAmountLobby(null);
                 userPf.setUserLobbyHost(false);
             }
             lobbyService.deleteById(id);
             return new ResponseEntity<Void>(HttpStatus.OK);
         }
-        if (lobbyEntity.isLobbyOpen()){
-            for (UserPf userPf: userPfList){
+        if (lobbyEntity.isLobbyOpen()) {
+            for (UserPf userPf : userPfList) {
                 userPf.setUserAmountLobby(null);
                 userPf.setUserLobbyHost(false);
             }
             lobbyService.deleteById(id);
             return new ResponseEntity<Void>(HttpStatus.OK);
         }
-        return new ResponseEntity<>(null , HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
     }
 
     @Override
@@ -160,7 +165,7 @@ public class LobbyController extends Observable implements LobbyApiController {
         Lobby lobby = lobbyService.findByUserPfList(userPf);
         if (userPf == null || lobby == null)
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(lobby , HttpStatus.OK);
+        return new ResponseEntity<>(lobby, HttpStatus.OK);
     }
 
     @Override
