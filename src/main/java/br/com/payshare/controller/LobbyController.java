@@ -8,6 +8,8 @@ import br.com.payshare.model.UserPf;
 import br.com.payshare.service.AuditService;
 import br.com.payshare.service.LobbyService;
 import br.com.payshare.service.UserPfService;
+import br.com.payshare.utils.structure.FilaObj;
+import br.com.payshare.utils.structure.PilhaObj;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +29,8 @@ public class LobbyController extends Observable implements LobbyApiController {
     LobbyService lobbyService;
     UserPfService userPfService;
     AuditService auditService;
-
+    FilaObj<Lobby> filaLobby = new FilaObj<>(500);
+    PilhaObj<Audit> pilhaLobby = new PilhaObj<>(1500);
     public LobbyController(){};
 
     @Autowired

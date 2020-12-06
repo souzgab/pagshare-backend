@@ -8,7 +8,7 @@ import br.com.payshare.service.AuditService;
 import br.com.payshare.service.LobbyService;
 import br.com.payshare.service.UserPfService;
 import br.com.payshare.utils.structure.FilaObj;
-import com.fasterxml.jackson.databind.util.JSONPObject;
+import org.apache.tomcat.jni.Local;
 import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
@@ -21,15 +21,15 @@ import org.springframework.web.bind.annotation.RestController;
 import org.json.JSONObject;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @RestController
@@ -38,20 +38,18 @@ public class AuditController implements AuditApiController, Observer {
     LobbyService lobbyService;
     UserPfService userPfService;
     AuditService auditService;
-    FilaObj<Lobby> filaLobby = new FilaObj<>(500);
+
     LobbyController lobbyController;
 
-    public AuditController() {
-    }
-
+    public AuditController() {}
 
     @Autowired
-    public AuditController(LobbyService lobbyService, UserPfService userPfService, AuditService auditService) {
+    public AuditController(LobbyService lobbyService, UserPfService userPfService, AuditService auditService,LobbyController lobbyController) {
         this.lobbyService = lobbyService;
         this.userPfService = userPfService;
         this.auditService = auditService;
+        this.lobbyController = lobbyController;
     }
-
 
     @Override
     public ResponseEntity<List<Audit>> findAll() {
@@ -133,11 +131,12 @@ public class AuditController implements AuditApiController, Observer {
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 
         header += String.format("%-3s", "00");
-        header += String.format("%-5s", "ID");
-        header += String.format("%-25s", "CREATED_AT");
-        header += String.format("%-10s", "MEMBERS");
-        header += String.format("%-10s", "AMOUNT");
-        header += String.format("%-20s", "UPDATED_AT");
+        header += String.format("%-10s", "IDLOBBY");
+        header += String.format("%-10s", "IDUSER");
+        header += String.format("%-110s", "USERPF_IDS_LOBBY");
+        header += String.format("%-200s", "LOBBYDATA");
+        header += String.format("%-100s", "DESCRIPTIONHISTORY");
+        header += String.format("%-15s", "CREATED_AT");
         header += String.format("%-15s", "TXT_CRIADO_EM:    ");
         header += formatter.format(dataDeHoje);
         header += " 01";
@@ -147,8 +146,12 @@ public class AuditController implements AuditApiController, Observer {
         for (Audit a : auditData) {
             corpo = "";
             corpo += String.format("%-3s", "99");
-            corpo += String.format("%-5d", a.getId());
-            corpo += String.format("%-25s", a.getCreatedAt());
+            corpo += String.format("%-10d", a.getIdLobby());
+            corpo += String.format("%-10d", a.getIdUser());
+            corpo += String.format("%-110s",a.getIdUserPfHistory());
+            corpo += String.format("%-200s",a.getLobbyData());
+            corpo += String.format("%-100s",a.getDescriptionHistory());
+            corpo += String.format("%-30s",a.getCreatedAt());
             contRegDados++;
             gravaRegistro(nomeArquivo, corpo);
         }
@@ -158,6 +161,50 @@ public class AuditController implements AuditApiController, Observer {
         gravaRegistro(nomeArquivo, trailer);
 
         return new ResponseEntity(new FileSystemResource(dirPath + nomeArquivo), headers, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<?> uploadTxt(@RequestParam MultipartFile arquivo) {
+        try {
+            String setIdLobby;
+            String setIdUser;
+            String setIdUserPfHistory;
+            String setLobbyData;
+            String setDescriptionHistory;
+            String setCreatedAt;
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(arquivo.getInputStream()));
+            String registro = reader.readLine();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+            while (registro != null) {
+                String indice = registro.substring(0,3);
+                if (indice.equals("99 ")){
+                    Audit audit = new Audit();
+
+                    setIdLobby = registro.substring(3,13);
+                    setIdUser = registro.substring(13, 23);
+                    setIdUserPfHistory = registro.substring(23, 131);
+                    setLobbyData = registro.substring(131, 336);
+                    setDescriptionHistory = registro.substring(330, 438);
+                    setCreatedAt = registro.substring(433, 456);
+
+                    audit.setIdLobby(Long.parseLong(setIdLobby.trim()));
+                    audit.setIdUser(Long.parseLong(setIdUser.trim()));
+                    audit.setIdUserPfHistory(setIdUserPfHistory.trim());
+                    audit.setLobbyData(setLobbyData.trim());
+                    audit.setDescriptionHistory(setDescriptionHistory.trim());
+                    audit.setCreatedAt(LocalDateTime.parse(setCreatedAt.trim()));
+                    lobbyController.pilhaLobby.push(audit);
+                }
+                registro = reader.readLine();
+            }
+            return ResponseEntity.created(null).build();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return ResponseEntity.badRequest().build();
     }
 
     public static void gravaRegistro(String nomeArquivo, String registro) {
@@ -176,65 +223,44 @@ public class AuditController implements AuditApiController, Observer {
     }
 
     @Override
-    public ResponseEntity<?> uploadTxt(@RequestParam("arquivo") MultipartFile arquivo) {
-        try {
-            if (arquivo.isEmpty()) {
-                return ResponseEntity.badRequest().body("Arquivo não enviado!");
-            }
-
-            // recuperando o tipo do arquivo
-            System.out.println("Recebendo um arquivo do tipo: " + arquivo.getContentType());
-
-            // recuperando o conteúdo do arquivo
-            byte[] conteudo = arquivo.getBytes();
-
-            // recuperando o nome original do arquivo e gravando uma cópia em disco
-            Path path = Paths.get(arquivo.getOriginalFilename());
-            Files.write(path, conteudo);
-
-            return ResponseEntity.created(null).build();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return ResponseEntity.badRequest().build();
-    }
-
-    @Override
     public void update(Observable o, Object arg) {
-
         try {
             if (arg instanceof Lobby) {
                 Lobby lobby = (Lobby) arg;
                 lobbyController = (LobbyController) o;
-                filaLobby.insert(lobby);
+                lobbyController.filaLobby.insert(lobby);
             }
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
     }
 
-    @Scheduled(fixedDelay = 10000)
-    private void executer() {
-
-        Lobby lobby = filaLobby.poll();
-
-        try {
-            if (lobbyController.auditService.findByIdLobby(lobby.getId()) != null) {
-                for (UserPf pf : lobby.getUserPfList()) {
-//                        Audit audit = lobbyController.auditService.findByIdLobby(lobby.getId());
-                    Audit audit = new Audit();
-                    audit.setIdUserPfHistory(generateJsonIds(lobby.getUserPfList()));
-                    audit.setIdLobby(lobby.getId());
-                    audit.setIdUser(pf.getUserId());
-                    audit.setLobbyData(generateJsonLobbyData(lobby));
-                    audit.setDescriptionHistory(lobby.getLobbyDescription());
-                    lobbyController.auditService.save(audit);
+    @Scheduled(fixedDelay = 5000)
+    private void executer() throws Exception{
+        try{
+            if(!lobbyController.filaLobby.isEmpty()){
+                Lobby lobby = lobbyController.filaLobby.poll();
+                if (lobbyController.auditService.findByIdLobby(lobby.getId()) != null) {
+                    for (UserPf pf : lobby.getUserPfList()) {
+                        Audit audit = new Audit();
+                        audit.setIdUserPfHistory(generateJsonIds(lobby.getUserPfList()));
+                        audit.setIdLobby(lobby.getId());
+                        audit.setIdUser(pf.getUserId());
+                        audit.setLobbyData(generateJsonLobbyData(lobby));
+                        audit.setDescriptionHistory(lobby.getLobbyDescription());
+                        lobbyController.auditService.save(audit);
+                    }
+                } else {
+                    Audit generatedAudit = generateAudit(lobby);
+                    lobbyController.auditService.save(generatedAudit);
                 }
-            } else {
-                Audit generatedAudit = generateAudit(lobby);
-                lobbyController.auditService.save(generatedAudit);
             }
-        } catch (Exception e) {
+
+            if(!lobbyController.pilhaLobby.isEmpty()){
+                Audit audit = lobbyController.pilhaLobby.pop();
+                auditService.save(audit);
+            }
+        }catch (Exception e){
             e.printStackTrace();
         }
     }
@@ -270,7 +296,7 @@ public class AuditController implements AuditApiController, Observer {
         } catch (Exception e) {
             System.out.println("Error at JsonGenerated: " + e.getMessage());
         }
-        System.out.println(json.toString());
+
         return json.toString();
     }
 
@@ -286,7 +312,7 @@ public class AuditController implements AuditApiController, Observer {
         } catch (Exception e) {
             System.out.println("Error at JsonGenerated: " + e.getMessage());
         }
-        System.out.println(json.toString());
+
         return json.toString();
     }
 
