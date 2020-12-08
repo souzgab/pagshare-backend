@@ -25,7 +25,7 @@ public interface LobbyApiController {
     ResponseEntity<?> update(@RequestBody Lobby lobby, @PathVariable long id)
             throws InstantiationException, IllegalAccessException;
 
-    @DeleteMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/deleteLobby/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<Void> delete(@PathVariable long id);
 
     @PostMapping(path = "/{idLobby}/{id}", produces = MediaType.APPLICATION_JSON_VALUE)

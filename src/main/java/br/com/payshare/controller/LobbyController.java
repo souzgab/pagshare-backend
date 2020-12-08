@@ -134,7 +134,6 @@ public class LobbyController extends Observable implements LobbyApiController {
     }
 
     @Override
-    @CrossOrigin(origins = "https://payshare-dev.herokuapp.com" , maxAge = 3600)
     public ResponseEntity<Void> delete(long id) {
         Lobby lobbyEntity = lobbyService.findById(id);
         List<UserPf> userPfList = userPfService.findByLobby(lobbyEntity);
