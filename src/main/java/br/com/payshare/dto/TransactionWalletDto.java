@@ -1,93 +1,68 @@
-package br.com.payshare.model;
+package br.com.payshare.dto;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-@Entity
-@Table(name = "TRANSACTION")
-public class Transaction implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "TRANSACTION_ID" , nullable = false)
+public class TransactionWalletDto {
+    @JsonProperty
     private long transactionId;
 
     @NotNull
-    @Column(name = "TRANSACTION_AMOUNT" , nullable = false)
+    @JsonProperty
     private BigDecimal amount;
 
-    @NotNull
-    @Column(name = "TRANSACTION_STATUS" , nullable = false)
+    @JsonProperty
     private String status;
 
-    @NotNull
-    @Column(name = "TRANSACTION_DESCRIPTION" , nullable = false , length = 255)
+    @JsonProperty
     private String description;
 
-    @Column(name = "TRANSACTION_PAYMENT_METHOD")
+    @JsonProperty
     private String paymentMethod;
 
-
-    @Column(name = "TRANSACTION_CURRENCYID" , length = 3)
+    @JsonProperty
     private String currencyId;
 
-    @NotNull
-    @Column(name = "TRANSACTION_EXTERNAL_REFERENCES" , nullable = false)
+    @JsonProperty
     private String externalReference;
 
-
-    @Column(name = "CREATED_AT")
+    @JsonProperty
     private LocalDateTime createdAt;
 
-
-    @Column(name = "EXPIRATION_DATE")
+    @JsonProperty
     private LocalDateTime expirationDate;
 
-    @NotNull
-    @Column(name = "INIT_POINT", nullable = false)
+    @JsonProperty
     private String initPoint;
-    
-    @NotNull
-    @Column(name = "cupomUser", nullable = false , length = 100)
-    private String cupomUser;
 
-    @ManyToOne
-    @JoinColumn(name = "USER_ID")
-    @JsonIgnore
-    private UserPf userPf;
-
-    @ManyToOne
-    @JoinColumn(name = "LOBBY_ID")
-    @JsonIgnore
-    private Lobby lobby;
+    @JsonProperty
+    private long userPf;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Transaction that = (Transaction) o;
+        TransactionWalletDto that = (TransactionWalletDto) o;
         return transactionId == that.transactionId &&
+                userPf == that.userPf &&
                 Objects.equals(amount, that.amount) &&
                 Objects.equals(status, that.status) &&
                 Objects.equals(description, that.description) &&
                 Objects.equals(paymentMethod, that.paymentMethod) &&
                 Objects.equals(currencyId, that.currencyId) &&
                 Objects.equals(externalReference, that.externalReference) &&
-                Objects.equals(userPf, that.userPf) &&
-                Objects.equals(lobby, that.lobby);
+                Objects.equals(createdAt, that.createdAt) &&
+                Objects.equals(expirationDate, that.expirationDate) &&
+                Objects.equals(initPoint, that.initPoint);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(transactionId, amount, status, description, paymentMethod, currencyId, externalReference, userPf, lobby);
+        return Objects.hash(transactionId, amount, status, description, paymentMethod, currencyId, externalReference, createdAt, expirationDate, initPoint, userPf);
     }
 
     public long getTransactionId() {
@@ -170,28 +145,11 @@ public class Transaction implements Serializable {
         this.initPoint = initPoint;
     }
 
-    public String getCupomUser() {
-        return cupomUser;
-    }
-
-    public void setCupomUser(String cupomUser) {
-        this.cupomUser = cupomUser;
-    }
-
-    public UserPf getUserPf() {
+    public long getUserPf() {
         return userPf;
     }
 
-    public void setUserPf(UserPf userPf) {
+    public void setUserPf(long userPf) {
         this.userPf = userPf;
     }
-
-    public Lobby getLobby() {
-        return lobby;
-    }
-
-    public void setLobby(Lobby lobby) {
-        this.lobby = lobby;
-    }
-
 }

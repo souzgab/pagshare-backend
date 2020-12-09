@@ -41,10 +41,11 @@ public class AuditController implements AuditApiController, Observer {
 
     LobbyController lobbyController;
 
-    public AuditController() {}
+    public AuditController() {
+    }
 
     @Autowired
-    public AuditController(LobbyService lobbyService, UserPfService userPfService, AuditService auditService,LobbyController lobbyController) {
+    public AuditController(LobbyService lobbyService, UserPfService userPfService, AuditService auditService, LobbyController lobbyController) {
         this.lobbyService = lobbyService;
         this.userPfService = userPfService;
         this.auditService = auditService;
@@ -148,10 +149,10 @@ public class AuditController implements AuditApiController, Observer {
             corpo += String.format("%-3s", "99");
             corpo += String.format("%-10d", a.getIdLobby());
             corpo += String.format("%-10d", a.getIdUser());
-            corpo += String.format("%-110s",a.getIdUserPfHistory());
-            corpo += String.format("%-200s",a.getLobbyData());
-            corpo += String.format("%-100s",a.getDescriptionHistory());
-            corpo += String.format("%-30s",a.getCreatedAt());
+            corpo += String.format("%-110s", a.getIdUserPfHistory());
+            corpo += String.format("%-200s", a.getLobbyData());
+            corpo += String.format("%-100s", a.getDescriptionHistory());
+            corpo += String.format("%-30s", a.getCreatedAt());
             contRegDados++;
             gravaRegistro(nomeArquivo, corpo);
         }
@@ -178,11 +179,11 @@ public class AuditController implements AuditApiController, Observer {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
             while (registro != null) {
-                String indice = registro.substring(0,3);
-                if (indice.equals("99 ")){
+                String indice = registro.substring(0, 3);
+                if (indice.equals("99 ")) {
                     Audit audit = new Audit();
 
-                    setIdLobby = registro.substring(3,13);
+                    setIdLobby = registro.substring(3, 13);
                     setIdUser = registro.substring(13, 23);
                     setIdUserPfHistory = registro.substring(23, 131);
                     setLobbyData = registro.substring(131, 336);
@@ -228,42 +229,13 @@ public class AuditController implements AuditApiController, Observer {
             if (arg instanceof Lobby) {
                 Lobby lobby = (Lobby) arg;
                 lobbyController = (LobbyController) o;
-                lobbyController.filaLobby.insert(lobby);
+                lobbyController.auditService.save(generateAudit(lobby));
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    @Scheduled(fixedDelay = 5000)
-    private void executer() throws Exception{
-        try{
-            if(!lobbyController.filaLobby.isEmpty()){
-                Lobby lobby = lobbyController.filaLobby.poll();
-                if (lobbyController.auditService.findByIdLobby(lobby.getId()) != null) {
-                    for (UserPf pf : lobby.getUserPfList()) {
-                        Audit audit = new Audit();
-                        audit.setIdUserPfHistory(generateJsonIds(lobby.getUserPfList()));
-                        audit.setIdLobby(lobby.getId());
-                        audit.setIdUser(pf.getUserId());
-                        audit.setLobbyData(generateJsonLobbyData(lobby));
-                        audit.setDescriptionHistory(lobby.getLobbyDescription());
-                        lobbyController.auditService.save(audit);
-                    }
-                } else {
-                    Audit generatedAudit = generateAudit(lobby);
-                    lobbyController.auditService.save(generatedAudit);
-                }
-            }
-
-            if(!lobbyController.pilhaLobby.isEmpty()){
-                Audit audit = lobbyController.pilhaLobby.pop();
-                auditService.save(audit);
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
 
     private Audit generateAudit(Lobby l) throws Exception {
         Audit audit = new Audit();

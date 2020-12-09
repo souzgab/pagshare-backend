@@ -1,6 +1,5 @@
 package br.com.payshare.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
@@ -11,9 +10,8 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-@Table(name = "TRANSACTION")
-public class Transaction implements Serializable {
-
+@Table(name = "TRANSACTION_WALLET")
+public class TransactionWallet implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,33 +45,23 @@ public class Transaction implements Serializable {
     @Column(name = "CREATED_AT")
     private LocalDateTime createdAt;
 
-
     @Column(name = "EXPIRATION_DATE")
     private LocalDateTime expirationDate;
 
     @NotNull
     @Column(name = "INIT_POINT", nullable = false)
     private String initPoint;
-    
-    @NotNull
-    @Column(name = "cupomUser", nullable = false , length = 100)
-    private String cupomUser;
 
     @ManyToOne
     @JoinColumn(name = "USER_ID")
     @JsonIgnore
     private UserPf userPf;
 
-    @ManyToOne
-    @JoinColumn(name = "LOBBY_ID")
-    @JsonIgnore
-    private Lobby lobby;
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Transaction that = (Transaction) o;
+        TransactionWallet that = (TransactionWallet) o;
         return transactionId == that.transactionId &&
                 Objects.equals(amount, that.amount) &&
                 Objects.equals(status, that.status) &&
@@ -81,13 +69,19 @@ public class Transaction implements Serializable {
                 Objects.equals(paymentMethod, that.paymentMethod) &&
                 Objects.equals(currencyId, that.currencyId) &&
                 Objects.equals(externalReference, that.externalReference) &&
-                Objects.equals(userPf, that.userPf) &&
-                Objects.equals(lobby, that.lobby);
+                Objects.equals(createdAt, that.createdAt) &&
+                Objects.equals(expirationDate, that.expirationDate) &&
+                Objects.equals(initPoint, that.initPoint) &&
+                Objects.equals(userPf, that.userPf);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(transactionId, amount, status, description, paymentMethod, currencyId, externalReference, userPf, lobby);
+        return Objects.hash(transactionId, amount, status, description, paymentMethod, currencyId, externalReference, createdAt, expirationDate, initPoint, userPf);
+    }
+
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
     }
 
     public long getTransactionId() {
@@ -170,14 +164,6 @@ public class Transaction implements Serializable {
         this.initPoint = initPoint;
     }
 
-    public String getCupomUser() {
-        return cupomUser;
-    }
-
-    public void setCupomUser(String cupomUser) {
-        this.cupomUser = cupomUser;
-    }
-
     public UserPf getUserPf() {
         return userPf;
     }
@@ -185,13 +171,4 @@ public class Transaction implements Serializable {
     public void setUserPf(UserPf userPf) {
         this.userPf = userPf;
     }
-
-    public Lobby getLobby() {
-        return lobby;
-    }
-
-    public void setLobby(Lobby lobby) {
-        this.lobby = lobby;
-    }
-
 }
