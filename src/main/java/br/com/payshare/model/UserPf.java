@@ -43,6 +43,10 @@ public class UserPf extends User{
     @JoinColumn(name = "USER_ID")
     private List<TransactionWallet> transactionWallets = new ArrayList<>();
 
+    @OneToMany
+    @JoinColumn(name = "USER_ID")
+    private List<LobbyUser> lobbyUserList = new ArrayList<>();
+
     @ManyToMany()
     @JoinTable(
             name = "users_roles",
@@ -147,5 +151,13 @@ public class UserPf extends User{
 
     public void setTransactionWallets(List<TransactionWallet> transactionWallets) {
         this.transactionWallets = transactionWallets;
+    }
+
+    public List<LobbyUser> getLobbyUserList() {
+        return lobbyUserList;
+    }
+
+    public void setLobbyUserList(List<LobbyUser> lobbyUserList) {
+        this.lobbyUserList = lobbyUserList;
     }
 }
