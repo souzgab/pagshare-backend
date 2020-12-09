@@ -90,7 +90,7 @@ public class LobbyController extends Observable implements LobbyApiController {
             if (lobby.isLobbyOpen()) {
                 userPfList.add(userPf);
                 for (UserPf userPf1 : userPfList) {
-                    userPf1.setUserAmountLobby(lobby.getAmount().divide(new BigDecimal(userPfList.size()), 2));
+                    userPf1.setUserAmountLobby(lobby.getAmount().divide(new BigDecimal(userPfList.size()), 0, RoundingMode.HALF_UP));
                     userPf1.setLobby(lobby);
                     try {
                         lobbyService.save(lobby);
