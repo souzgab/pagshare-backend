@@ -8,19 +8,19 @@ import br.com.payshare.model.UserPf;
 import br.com.payshare.service.AuditService;
 import br.com.payshare.service.LobbyService;
 import br.com.payshare.service.UserPfService;
+import br.com.payshare.utils.structure.FilaObj;
+import br.com.payshare.utils.structure.PilhaObj;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
+import java.util.*;
 
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -30,10 +30,9 @@ public class LobbyController extends Observable implements LobbyApiController {
     UserPfService userPfService;
     AuditService auditService;
 
-    public LobbyController() {
-    }
-
-    ;
+    FilaObj<Lobby> filaLobby = new FilaObj<>(500);
+    PilhaObj<Audit> pilhaLobby = new PilhaObj<>(1500);
+    public LobbyController(){};
 
     @Autowired
     public LobbyController(LobbyService lobbyService, UserPfService userPfService, AuditService auditService) {
@@ -61,6 +60,7 @@ public class LobbyController extends Observable implements LobbyApiController {
     public ResponseEntity<?> create(Lobby lobby, long idUser) throws InstantiationException, IllegalAccessException {
         LocalDateTime now = LocalDateTime.now();
         UserPf userPf = userPfService.findByUserId(idUser);
+        UUID uuid = UUID.randomUUID();
         if (userPf.isUserLobbyHost() || userPf.getLobby() != null)
             return new ResponseEntity<>("Already_hosting_a_lobby", HttpStatus.BAD_REQUEST);
         List<UserPf> userPfList = new ArrayList<>();
@@ -86,28 +86,30 @@ public class LobbyController extends Observable implements LobbyApiController {
 
         if (userPf.getLobby() != null)
             return new ResponseEntity<>("You_are_already_associated_with_a_lobby", HttpStatus.BAD_REQUEST);
-
-        if (lobby.isLobbyOpen()) {
-            userPfList.add(userPf);
-            for (UserPf userPf1 : userPfList) {
-                userPf1.setUserAmountLobby(lobby.getAmount().divide(new BigDecimal(userPfList.size()), 2, RoundingMode.HALF_UP));
-                userPf1.setLobby(lobby);
-                try {
-                    lobbyService.save(lobby);
-                    userPfService.save(userPf1);
-                } catch (Exception e) {
-                    System.out.println("Erro ao salvar entidade: " + e.getMessage());
-                } finally {
-                    System.out.println(lobby.toString());
-                    this.addObserver(new AuditController());
-                    this.notificar(lobby);
+        try {
+            if (lobby.isLobbyOpen()) {
+                userPfList.add(userPf);
+                for (UserPf userPf1 : userPfList) {
+                    userPf1.setUserAmountLobby(lobby.getAmount().divide(new BigDecimal(userPfList.size()), 2, RoundingMode.HALF_UP));
+                    userPf1.setLobby(lobby);
+                    try {
+                        lobbyService.save(lobby);
+                        userPfService.save(userPf1);
+                    } catch (Exception e) {
+                        System.out.println("Erro ao salvar entidade: " + e.getMessage());
+                    }
                 }
+                return new ResponseEntity<>(lobby, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("\n" +
+                        "lobby payments have already been initiated so it is not possible to add someone in the same", HttpStatus.BAD_REQUEST);
             }
-            return new ResponseEntity<>(lobby, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>("\n" +
-                    "lobby payments have already been initiated so it is not possible to add someone in the same", HttpStatus.BAD_REQUEST);
+        }catch (Exception e){
+
+        }finally {
+            filaLobby.insert(lobbyService.findById(lobby.getId()));
         }
+        return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
     }
 
     @Override
@@ -124,12 +126,17 @@ public class LobbyController extends Observable implements LobbyApiController {
                 userPfService.save(userPf1);
             } catch (Exception e) {
                 System.out.println("Erro ao salvar entidade: " + e.getMessage());
+
             } finally {
-                System.out.println(lobby.toString());
-                this.addObserver(new AuditController());
-                this.notificar(lobby);
+                filaLobby.insert(lobbyService.findById(lobby.getId()));
             }
         }
+        try{
+           filaLobby.insert(lobbyService.findById(lobby.getId()));
+        }catch (Exception e){
+            System.out.println("Erro ao comunicar Audit");
+        }
+
         return new ResponseEntity<>(lobby, HttpStatus.OK);
     }
 
@@ -181,5 +188,22 @@ public class LobbyController extends Observable implements LobbyApiController {
     private void notificar(Lobby l) {
         setChanged();
         notifyObservers(l);
+    }
+
+    @Scheduled(fixedDelay = 10000)
+    private void executer() throws Exception {
+        try {
+            if (!filaLobby.isEmpty()) {
+                Lobby lobby = filaLobby.poll();
+                this.addObserver(new AuditController());
+                this.notificar(lobby);
+            }
+            if (!pilhaLobby.isEmpty()) {
+                Audit audit = pilhaLobby.pop();
+                auditService.save(audit);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
