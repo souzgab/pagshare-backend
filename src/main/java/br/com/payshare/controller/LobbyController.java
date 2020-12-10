@@ -4,9 +4,11 @@ package br.com.payshare.controller;
 import br.com.payshare.api.LobbyApiController;
 import br.com.payshare.model.Audit;
 import br.com.payshare.model.Lobby;
+import br.com.payshare.model.LobbyUser;
 import br.com.payshare.model.UserPf;
 import br.com.payshare.service.AuditService;
 import br.com.payshare.service.LobbyService;
+import br.com.payshare.service.LobbyUserService;
 import br.com.payshare.service.UserPfService;
 import br.com.payshare.utils.structure.FilaObj;
 import br.com.payshare.utils.structure.PilhaObj;
@@ -29,16 +31,18 @@ public class LobbyController extends Observable implements LobbyApiController {
     LobbyService lobbyService;
     UserPfService userPfService;
     AuditService auditService;
+    LobbyUserService lobbyUserService;
 
     FilaObj<Lobby> filaLobby = new FilaObj<>(500);
     PilhaObj<Audit> pilhaLobby = new PilhaObj<>(1500);
     public LobbyController(){};
 
     @Autowired
-    public LobbyController(LobbyService lobbyService, UserPfService userPfService, AuditService auditService) {
+    public LobbyController(LobbyService lobbyService, UserPfService userPfService, AuditService auditService, LobbyUserService lobbyUserService) {
         this.lobbyService = lobbyService;
         this.userPfService = userPfService;
         this.auditService = auditService;
+        this.lobbyUserService = lobbyUserService;
     }
 
     @Override
@@ -73,6 +77,17 @@ public class LobbyController extends Observable implements LobbyApiController {
         lobby.setUserPfList(userPfList);
         lobby.setLobbyOpen(true);
         lobbyService.save(lobby);
+
+        LobbyUser lobbyUser = new LobbyUser();
+        lobbyUser.setAmount(lobby.getAmount());
+        lobbyUser.setLobbyDescription(lobby.getLobbyDescription());
+        lobbyUser.setOrderDescription(lobby.getOrderDescription());
+        lobbyUser.setUserPf(userPf);
+        lobbyUser.setExpirationDate(lobby.getExpirationDate());
+        lobbyUser.setCreationDate(lobby.getCreationDate());
+        lobbyUser.setAmountTotal(lobby.getAmountTotal());
+        lobbyUserService.save(lobbyUser);
+
         this.addObserver(new AuditController());
         this.notificar(lobby);
         return new ResponseEntity<>(lobby, HttpStatus.OK);
@@ -89,6 +104,17 @@ public class LobbyController extends Observable implements LobbyApiController {
         try {
             if (lobby.isLobbyOpen()) {
                 userPfList.add(userPf);
+
+                LobbyUser lobbyUser = new LobbyUser();
+                lobbyUser.setAmount(lobby.getAmount());
+                lobbyUser.setLobbyDescription(lobby.getLobbyDescription());
+                lobbyUser.setOrderDescription(lobby.getOrderDescription());
+                lobbyUser.setUserPf(userPf);
+                lobbyUser.setExpirationDate(lobby.getExpirationDate());
+                lobbyUser.setCreationDate(lobby.getCreationDate());
+                lobbyUser.setAmountTotal(lobby.getAmountTotal());
+                lobbyUserService.save(lobbyUser);
+
                 for (UserPf userPf1 : userPfList) {
                     userPf1.setUserAmountLobby(lobby.getAmount().divide(new BigDecimal(userPfList.size()), 2, RoundingMode.HALF_UP));
                     userPf1.setLobby(lobby);
