@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -91,7 +90,7 @@ public class LobbyController extends Observable implements LobbyApiController {
             if (lobby.isLobbyOpen()) {
                 userPfList.add(userPf);
                 for (UserPf userPf1 : userPfList) {
-                    userPf1.setUserAmountLobby(lobby.getAmount().divide(new BigDecimal(userPfList.size()),MathContext.DECIMAL128));
+                    userPf1.setUserAmountLobby(lobby.getAmount().divide(new BigDecimal(userPfList.size()), 2, RoundingMode.HALF_UP));
                     userPf1.setLobby(lobby);
                     try {
                         lobbyService.save(lobby);
@@ -148,7 +147,7 @@ public class LobbyController extends Observable implements LobbyApiController {
         if (lobbyEntity == null) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
-        if (lobbyEntity.getAmountTotal().compareTo(lobbyEntity.getAmount()) >= 0) {
+        if (lobbyEntity.getAmountTotal().compareTo(lobbyEntity.getAmount()) == 0) {
             for (UserPf userPf : userPfList) {
                 userPf.setUserAmountLobby(null);
                 userPf.setUserLobbyHost(false);
