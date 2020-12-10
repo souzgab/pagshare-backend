@@ -148,7 +148,7 @@ public class LobbyController extends Observable implements LobbyApiController {
         if (lobbyEntity == null) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
-        if (lobbyEntity.getAmountTotal().compareTo(lobbyEntity.getAmount()) == 0) {
+        if (lobbyEntity.getAmountTotal().compareTo(lobbyEntity.getAmount()) >= 0) {
             for (UserPf userPf : userPfList) {
                 userPf.setUserAmountLobby(null);
                 userPf.setUserLobbyHost(false);
