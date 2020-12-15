@@ -1,25 +1,18 @@
 package br.com.payshare.model;
 
-import br.com.payshare.interfaces.Taxes;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import javax.validation.constraints.NotNull;
-
-import org.hibernate.annotations.Cascade;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name = "Lobby")
-public class Lobby implements Taxes , Serializable {
+@Table(name = "LOBBY_USER")
+public class LobbyUser implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -50,38 +43,30 @@ public class Lobby implements Taxes , Serializable {
     @Convert(converter = Jsr310JpaConverters.LocalDateTimeConverter.class)
     private LocalDateTime expirationDate;
 
-    @NotNull
-    @Column(name = "LOBBY_OPEN" , length = 1 , nullable = true , columnDefinition = "boolean default true")
-    private boolean lobbyOpen;
+    @ManyToOne
+    @JoinColumn(name = "USER_ID")
+    @JsonBackReference
+    private UserPf userPf;
 
-    @OneToMany
-    @JoinColumn(name = "LOBBY_ID")
-    private List<UserPf> userPfList = new ArrayList<>();
-
-    @OneToMany
-    @JoinColumn(name = "LOBBY_ID")
-    private List<Transaction> transactions = new ArrayList<>();
-
-    public Lobby() {
-    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Lobby lobby = (Lobby) o;
-        return id == lobby.id &&
-                Objects.equals(lobbyDescription, lobby.lobbyDescription) &&
-                Objects.equals(orderDescription, lobby.orderDescription) &&
-                Objects.equals(amount, lobby.amount) &&
-                Objects.equals(creationDate, lobby.creationDate) &&
-                Objects.equals(expirationDate, lobby.expirationDate) &&
-                Objects.equals(userPfList, lobby.userPfList);
+        LobbyUser lobbyUser = (LobbyUser) o;
+        return id == lobbyUser.id &&
+                Objects.equals(lobbyDescription, lobbyUser.lobbyDescription) &&
+                Objects.equals(orderDescription, lobbyUser.orderDescription) &&
+                Objects.equals(amount, lobbyUser.amount) &&
+                Objects.equals(amountTotal, lobbyUser.amountTotal) &&
+                Objects.equals(creationDate, lobbyUser.creationDate) &&
+                Objects.equals(expirationDate, lobbyUser.expirationDate) &&
+                Objects.equals(userPf, lobbyUser.userPf);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, lobbyDescription, orderDescription, amount, creationDate, expirationDate, userPfList);
+        return Objects.hash(id, lobbyDescription, orderDescription, amount, amountTotal, creationDate, expirationDate, userPf);
     }
 
     public long getId() {
@@ -116,6 +101,14 @@ public class Lobby implements Taxes , Serializable {
         this.amount = amount;
     }
 
+    public BigDecimal getAmountTotal() {
+        return amountTotal;
+    }
+
+    public void setAmountTotal(BigDecimal amountTotal) {
+        this.amountTotal = amountTotal;
+    }
+
     public LocalDateTime getCreationDate() {
         return creationDate;
     }
@@ -132,48 +125,11 @@ public class Lobby implements Taxes , Serializable {
         this.expirationDate = expirationDate;
     }
 
-    public List<UserPf> getUserPfList() {
-        return userPfList;
+    public UserPf getUserPf() {
+        return userPf;
     }
 
-    public void setUserPfList(List<UserPf> userPfList) {
-        this.userPfList = userPfList;
-    }
-
-    public List<Transaction> getTransactions() {
-        return transactions;
-    }
-
-    public void setTransactions(List<Transaction> transactions) {
-        this.transactions = transactions;
-    }
-
-    public BigDecimal getAmountTotal() {
-        return amountTotal;
-    }
-
-    public void setAmountTotal(BigDecimal amountTotal) {
-        this.amountTotal = amountTotal;
-    }
-
-    public boolean isLobbyOpen() {
-        return lobbyOpen;
-    }
-
-    public void setLobbyOpen(boolean lobbyOpen) {
-        this.lobbyOpen = lobbyOpen;
-    }
-
-    @Override
-    public String toString() {
-        return "Lobby{" +
-                "id=" + id +
-                ", lobbyDescription='" + lobbyDescription + '\'' +
-                ", orderDescription='" + orderDescription + '\'' +
-                ", amount=" + amount +
-                ", creationDate=" + creationDate +
-                ", expirationDate=" + expirationDate +
-                ", userPfList=" + userPfList +
-                '}';
+    public void setUserPf(UserPf userPf) {
+        this.userPf = userPf;
     }
 }
