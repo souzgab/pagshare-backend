@@ -6,6 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.print.attribute.standard.Media;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -27,7 +28,11 @@ public interface TransactionApiController {
 
     @PostMapping(path = "/wallet-lobby/{idUser}/{amount}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createTransactionByLobbyWallet(@PathVariable long idUser, @PathVariable BigDecimal amount)throws
-            InstantiationException, IllegalAccessException;;
+            InstantiationException, IllegalAccessException;
+
+    @PostMapping(path = "/wallet-transfer/{idUserCurrent}/{amount}/{idUserSend}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> createTransactionTransfer(@PathVariable long idUserCurrent , @PathVariable BigDecimal amount , @PathVariable long idUserSend)throws
+            InstantiationException, IllegalAccessException;
 
     @PostMapping(path = "/wallet/{idUser}/{amount}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createTransactionByUserWallet(@RequestHeader(name = "Authorization") String token
