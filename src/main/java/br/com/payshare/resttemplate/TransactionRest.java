@@ -2,7 +2,6 @@ package br.com.payshare.resttemplate;
 
 import br.com.payshare.dto.TransactionDto;
 import br.com.payshare.dto.TransactionWalletDto;
-import br.com.payshare.model.Transaction;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
