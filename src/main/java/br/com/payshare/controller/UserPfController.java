@@ -44,6 +44,15 @@ public class UserPfController implements UserApiController {
     }
 
     @Override
+    public ResponseEntity<UserPf> findByCpf(String cpfDocument) {
+        UserPf user = userPfService.findByCpf(cpfDocument);
+        if (user == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
+    @Override
     @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<UserPf> findById(long id) {
         UserPf user = userPfService.findByUserId(id);

@@ -47,12 +47,17 @@ public class UserPfServiceImpl implements UserPfService {
     }
 
     @Override
-    public LoginUserDto findByCpf(String cpf) {
+    public UserPf findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    @Override
+    public UserPf findByCpf(String cpf) {
         return userRepository.findByCpf(cpf);
     }
 
     @Override
-    public UserPf findByEmail(String email) {
-        return userRepository.findByEmail(email);
+    public void flush() {
+        userRepository.flush();
     }
 }

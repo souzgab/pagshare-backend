@@ -21,19 +21,23 @@ public interface TransactionApiController {
     public ResponseEntity<?> findById(@PathVariable long idTransaction) throws
             InstantiationException, IllegalAccessException;
 
+    //cria transação com mercadoPago
     @PostMapping(path = "/{idUser}/{amount}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createTransactiobByLobby(@RequestHeader(name = "Authorization") String token
             , @PathVariable BigDecimal amount, @PathVariable long idUser) throws
             InstantiationException, IllegalAccessException;
 
+    // cria pagamento da lobby com a carteira
     @PostMapping(path = "/wallet-lobby/{idUser}/{amount}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createTransactionByLobbyWallet(@PathVariable long idUser, @PathVariable BigDecimal amount)throws
             InstantiationException, IllegalAccessException;
 
-    @PostMapping(path = "/wallet-transfer/{idUserCurrent}/{amount}/{idUserSend}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> createTransactionTransfer(@PathVariable long idUserCurrent , @PathVariable BigDecimal amount , @PathVariable long idUserSend)throws
+    // cria transferencia entre contas
+    @PostMapping(path = "/wallet-transfer/{idUserCurrent}/{amount}/{cpfDocument}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> createTransactionTransfer(@PathVariable long idUserCurrent , @PathVariable BigDecimal amount , @PathVariable String cpfDocument)throws
             InstantiationException, IllegalAccessException;
 
+    // adiciona dinheiro na carteira
     @PostMapping(path = "/wallet/{idUser}/{amount}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createTransactionByUserWallet(@RequestHeader(name = "Authorization") String token
             , @PathVariable long idUser, @PathVariable BigDecimal amount) throws

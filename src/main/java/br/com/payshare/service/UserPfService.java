@@ -8,10 +8,11 @@ import java.util.List;
 
 public interface UserPfService {
     UserPf findByUserId(long id);
+    UserPf findByCpf(String cpf);
     UserPf save(UserPf userPf);
     void deleteById(long id);
+    void flush();
     List<UserPf> findAll();
     List<UserPf> findByLobby(Lobby lobby);
-    LoginUserDto findByCpf(String cpf);
     UserPf findByEmail(String email);
 }
