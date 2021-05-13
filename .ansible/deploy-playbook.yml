@@ -29,9 +29,9 @@
         published_ports:
           - 0.0.0.0:8080:8080
         env: 
-            SPRING_DATASOURCE_URL: {{SPRING_DATASOURCE_URL}}
-            SPRING_DATASOURCE_USERNAME: {{POSTGRES_USERNAME}}
-            SPRING_DATASOURCE_PASSWORD: {{POSTGRES_PASSWORD}}
+            SPRING_DATASOURCE_URL: "{{SPRING_DATASOURCE_URL}}"
+            SPRING_DATASOURCE_USERNAME: "{{POSTGRES_USERNAME}}"
+            SPRING_DATASOURCE_PASSWORD: "{{POSTGRES_PASSWORD}}"
 
     - name: Start the container backend-2
       docker_container:
@@ -42,9 +42,9 @@
         published_ports:
           - 0.0.0.0:8081:8080
         env: 
-            SPRING_DATASOURCE_URL: {{SPRING_DATASOURCE_URL}}
-            SPRING_DATASOURCE_USERNAME: {{POSTGRES_USERNAME}}
-            SPRING_DATASOURCE_PASSWORD: {{POSTGRES_PASSWORD}}
+            SPRING_DATASOURCE_URL: "{{SPRING_DATASOURCE_URL}}"
+            SPRING_DATASOURCE_USERNAME: "{{POSTGRES_USERNAME}}"
+            SPRING_DATASOURCE_PASSWORD: "{{POSTGRES_PASSWORD}}"
 
     - name: Start the container postgres
       docker_container:
@@ -55,5 +55,5 @@
         published_ports:
           - 0.0.0.0:5432:5432
         env:
-            POSTGRES_USER: {{POSTGRES_USERNAME}}
-            POSTGRES_PASSWORD: {{POSTGRES_PASSWORD}}
+            POSTGRES_USER: "{{POSTGRES_USERNAME}}"
+            POSTGRES_PASSWORD: "{{POSTGRES_PASSWORD}}"
