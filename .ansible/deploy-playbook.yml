@@ -26,12 +26,12 @@
         image: "lucasmocerinomonteiro/payshare-backend:{{DOCKER_TAG}}"
         state: started
         restart_policy: always
+        published_ports:
+          - 0.0.0.0:8080:8080
         env: 
             SPRING_DATASOURCE_URL: {{SPRING_DATASOURCE_URL}}
             SPRING_DATASOURCE_USERNAME: {{POSTGRES_USERNAME}}
             SPRING_DATASOURCE_PASSWORD: {{POSTGRES_PASSWORD}}
-        published_ports:
-          - 0.0.0.0:8080:8080
 
     - name: Start the container backend-2
       docker_container:
@@ -39,12 +39,12 @@
         image: "lucasmocerinomonteiro/payshare-backend:{{DOCKER_TAG}}"
         state: started
         restart_policy: always
+        published_ports:
+          - 0.0.0.0:8081:8080
         env: 
             SPRING_DATASOURCE_URL: {{SPRING_DATASOURCE_URL}}
             SPRING_DATASOURCE_USERNAME: {{POSTGRES_USERNAME}}
             SPRING_DATASOURCE_PASSWORD: {{POSTGRES_PASSWORD}}
-        published_ports:
-          - 0.0.0.0:8081:8080
 
     - name: Start the container postgres
       docker_container:
@@ -52,8 +52,8 @@
         image: "postgres:13.1-alpine"
         state: started
         restart_policy: always
-          env:
-              POSTGRES_USER: {{POSTGRES_USERNAME}}
-              POSTGRES_PASSWORD: {{POSTGRES_PASSWORD}}
         published_ports:
           - 0.0.0.0:5432:5432
+        env:
+            POSTGRES_USER: {{POSTGRES_USERNAME}}
+            POSTGRES_PASSWORD: {{POSTGRES_PASSWORD}}
