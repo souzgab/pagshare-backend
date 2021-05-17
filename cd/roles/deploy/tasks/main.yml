@@ -37,6 +37,19 @@
   pip:
     name: docker-py
     state: present
+    
+- name: Start the container postgres
+  docker_container:
+    name: db
+    image: "postgres:13.1-alpine"
+    state: started
+    restart_policy: always
+    published_ports:
+      - 0.0.0.0:5432:5432
+    env:
+        POSTGRES_USER: "{{POSTGRES_USERNAME}}"
+        POSTGRES_PASSWORD: "{{POSTGRES_PASSWORD}}"
+        
 - name: Start the container 1
   docker_container:
     name: app-1
@@ -51,7 +64,7 @@
         SPRING_DATASOURCE_URL: "{{SPRING_DATASOURCE_URL}}"
         SPRING_DATASOURCE_USERNAME: "{{POSTGRES_USERNAME}}"  
         SPRING_DATASOURCE_PASSWORD: "{{POSTGRES_PASSWORD}}"
-    
+        
 - name: Start the container 2
   docker_container:
     name: app-2
@@ -68,15 +81,3 @@
         SPRING_DATASOURCE_PASSWORD: "{{POSTGRES_PASSWORD}}"
   notify:
   - Reboot nginx service
-
-- name: Start the container postgres
-  docker_container:
-    name: db
-    image: "postgres:13.1-alpine"
-    state: started
-    restart_policy: always
-    published_ports:
-      - 0.0.0.0:5432:5432
-    env:
-        POSTGRES_USER: "{{POSTGRES_USERNAME}}"
-        POSTGRES_PASSWORD: "{{POSTGRES_PASSWORD}}"
