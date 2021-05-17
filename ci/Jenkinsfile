@@ -29,7 +29,7 @@ pipeline {
         }
         stage('Docker deploy') { 
             steps { 
-                 ansiblePlaybook credentialsId: 'ec2-dev-web', disableHostKeyChecking: true, extras: "-e DOCKER_TAG=${BUILD_NUMBER} -e SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/payshare -e POSTGRES_BASE=payshare -e POSTGRES_USERNAME=payshare -e POSTGRES_PASSWORD=payshare -e POSTGRES_PORT=5432", installation: 'ansible', inventory: 'cd/payshare.inv', playbook: 'cd/deploy-playbook.yml'
+                 ansiblePlaybook credentialsId: 'ec2-dev-web', disableHostKeyChecking: true, extras: "-e DOCKER_TAG=${BUILD_NUMBER} -e SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/payshare -e POSTGRES_BASE=payshare -e POSTGRES_USERNAME=payshare -e POSTGRES_PASSWORD=payshare -e POSTGRES_PORT=5432", installation: 'ansible',  inventory: 'cd/env/hosts', playbook: 'cd/site.yml'
             }
         } 
     }
