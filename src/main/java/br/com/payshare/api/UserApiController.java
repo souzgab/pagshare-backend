@@ -2,6 +2,7 @@ package br.com.payshare.api;
 
 
 import br.com.payshare.PayshareApplication;
+import br.com.payshare.model.User;
 import br.com.payshare.model.UserPf;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,9 @@ public interface UserApiController {
 
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<UserPf> findById(@PathVariable long id);
+
+    @GetMapping(path = "/cpf/{cpfDocument}", produces = MediaType.APPLICATION_JSON_VALUE)
+    ResponseEntity<UserPf> findByCpf(@PathVariable String cpfDocument);
 
     @PostMapping(path = "/save", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<?> save(@RequestBody UserPf userPf)

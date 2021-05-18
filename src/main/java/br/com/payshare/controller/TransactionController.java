@@ -48,6 +48,7 @@ public class TransactionController implements TransactionApiController {
         return new ResponseEntity<>(transaction,HttpStatus.OK) ;
     }
 
+    //
     @Override
     public ResponseEntity<?> createTransactiobByLobby(String token, BigDecimal amount, long idUser) throws InstantiationException, IllegalAccessException {
         TransactionRest transactionRest = new TransactionRest();
@@ -55,10 +56,12 @@ public class TransactionController implements TransactionApiController {
     }
 
     @Override
-    public ResponseEntity<?> createTransactionTransfer(long idUserCurrent, BigDecimal amount, long idUserSend) throws InstantiationException, IllegalAccessException {
+    public ResponseEntity<?> createTransactionTransfer(long idUserCurrent, BigDecimal amount, String cpfDocument) throws InstantiationException, IllegalAccessException {
         UserPf userPfCurrent = userPfService.findByUserId(idUserCurrent);
-        UserPf userPfSend = userPfService.findByUserId(idUserSend);
+        UserPf userPfSend = userPfService.findByCpf(cpfDocument);
         LocalDateTime now = LocalDateTime.now();
+
+        System.out.println("nome do usuariooooo " + userPfSend.getName());
 
         if (userPfCurrent.getUserAmount().compareTo(BigDecimal.ZERO) == 0)
             return new ResponseEntity<>("Insufficient_funds", HttpStatus.UNAUTHORIZED);
@@ -115,6 +118,7 @@ public class TransactionController implements TransactionApiController {
         return new ResponseEntity<>(transaction, HttpStatus.ACCEPTED);
     }
 
+    // realiza pagamento com a wallet
     @Override
     public ResponseEntity<?> createTransactionByLobbyWallet(long idUser, BigDecimal amount) throws InstantiationException, IllegalAccessException {
         UserPf userPf = userPfService.findByUserId(idUser);
@@ -153,6 +157,7 @@ public class TransactionController implements TransactionApiController {
         return new ResponseEntity<>(transaction, HttpStatus.OK);
     }
 
+    // adiciona dinheiro na carteira
     @Override
     public ResponseEntity<?> createTransactionByUserWallet(String token, long idUser, BigDecimal amount) throws InstantiationException, IllegalAccessException {
         TransactionRest transactionRest = new TransactionRest();
