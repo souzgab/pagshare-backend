@@ -157,6 +157,40 @@ public class TransactionController implements TransactionApiController {
         return new ResponseEntity<>(transaction, HttpStatus.OK);
     }
 
+    @Override
+    public ResponseEntity<?> createTransactionByCardLobby(long idUser, BigDecimal amount) throws InstantiationException, IllegalAccessException {
+        UserPf userPf = userPfService.findByUserId(idUser);
+        Lobby lobby = lobbyService.findByUserPfList(userPf);
+        LocalDateTime now = LocalDateTime.now();
+
+        if (userPf.getUserAmountLobby().compareTo(BigDecimal.ZERO) == 0){
+            return new ResponseEntity<>("Você já pagou a sua parte", HttpStatus.OK);
+        }
+        Transaction transaction = new Transaction();
+        try {
+            transaction.setAmount(amount);
+            transaction.setCreatedAt(now);
+            transaction.setExpirationDate(now.plusHours(48));
+            transaction.setCurrencyId("BRL");
+            transaction.setDescription(lobby.getLobbyDescription());
+            transaction.setExternalReference("payment-card" + now);
+            transaction.setPaymentMethod("payment-card");
+            transaction.setInitPoint("payment-card");
+            transaction.setStatus("approved");
+            transaction.setCupomUser(userPf.getName());
+            transaction.setLobby(lobby);
+            transaction.setUserPf(userPf);
+            userPf.setUserAmountLobby(transaction.getAmount().subtract(userPf.getUserAmountLobby()));
+            lobby.setAmountTotal(transaction.getAmount().add(lobby.getAmountTotal()));
+            lobby.setLobbyOpen(false); // assim que e feito a primeira transação a lobby sera fechada para novos participantes impossibilitando exclusão
+        } catch (Exception e) {
+            System.out.println(e);
+        } finally {
+            transactionService.save(transaction);
+        }
+        return new ResponseEntity<>(transaction, HttpStatus.OK);
+    }
+
     // adiciona dinheiro na carteira
     @Override
     public ResponseEntity<?> createTransactionByUserWallet(String token, long idUser, BigDecimal amount) throws InstantiationException, IllegalAccessException {

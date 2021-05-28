@@ -32,6 +32,10 @@ public interface TransactionApiController {
     public ResponseEntity<?> createTransactionByLobbyWallet(@PathVariable long idUser, @PathVariable BigDecimal amount)throws
             InstantiationException, IllegalAccessException;
 
+    @PostMapping(path = "/card-lobby/{idUser}/{amount}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> createTransactionByCardLobby(@PathVariable long idUser, @PathVariable BigDecimal amount) throws
+            InstantiationException, IllegalAccessException;
+
     // cria transferencia entre contas
     @PostMapping(path = "/wallet-transfer/{idUserCurrent}/{amount}/{cpfDocument}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createTransactionTransfer(@PathVariable long idUserCurrent , @PathVariable BigDecimal amount , @PathVariable String cpfDocument)throws
